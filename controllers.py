@@ -28,12 +28,15 @@ Warning: Fixtures MUST be declared with @action.uses({fixtures}) else your app w
 from py4web import action, request, abort, redirect, URL
 from yatl.helpers import A
 from .common import db, session, T, cache, auth, logger, authenticated, unauthenticated, flash
+from py4web.utils.url_signer import URLSigner
+from .models import get_user_email
 
+url_signer = URLSigner(session)
 
-@action("index")
-@action.uses("index.html", auth, T)
+@action('index')
+@action.uses('index.html', db, auth.user, url_signer)
 def index():
-    user = auth.get_user()
-    message = T("Hello {first_name}".format(**user) if user else "Hello")
-    actions = {"allowed_actions": auth.param.allowed_actions}
-    return dict(message=message, actions=actions)
+    return dict(
+        # COMPLETE: return here any signed URLs you need.
+        my_callback_url = URL('my_callback', signer=url_signer),
+    )
