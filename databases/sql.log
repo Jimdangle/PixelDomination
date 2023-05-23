@@ -19,3 +19,31 @@ CREATE TABLE "auth_user_tag_groups"(
     "record_id" INTEGER REFERENCES "auth_user" ("id") ON DELETE CASCADE ON UPDATE CASCADE  
 );
 success!
+timestamp: 2023-05-23T13:10:04.336112
+CREATE TABLE "py4web_session"(
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "rkey" CHAR(512),
+    "rvalue" TEXT,
+    "expiration" INTEGER,
+    "created_on" TIMESTAMP,
+    "expires_on" TIMESTAMP
+);
+success!
+success!
+success!
+timestamp: 2023-05-23T13:23:18.720944
+CREATE TABLE "Board"(
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "pos_x" INTEGER,
+    "pos_y" INTEGER,
+    "color" CHAR(512)
+);
+success!
+timestamp: 2023-05-23T13:23:18.722973
+CREATE TABLE "UClick"(
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "uid" INTEGER REFERENCES "auth_user" ("id") ON DELETE CASCADE ON UPDATE CASCADE  ,
+    "last_click" INTEGER
+);
+success!
+success!
