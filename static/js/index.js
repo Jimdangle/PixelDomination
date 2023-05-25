@@ -60,9 +60,11 @@ let init = (app) => {
     let rect = app.data.canvas.getBoundingClientRect();
     let x = Math.floor((e.clientX - rect.left) / app.data.gridSize);
     let y = Math.floor((e.clientY - rect.top) / app.data.gridSize);
+    axios.post(draw_url,{params: {x:x,y:y}}).then(function (r) {
+            
+        
+    });
     app.data.ctx.fillStyle = app.data.selectedColor;
-
-
     app.data.ctx.fillRect(
       x * app.data.gridSize,
       y * app.data.gridSize,
