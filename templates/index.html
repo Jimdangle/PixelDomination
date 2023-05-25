@@ -34,13 +34,20 @@
       <div class="color" style="background-color: yellow;" @click="selectColor('yellow')"></div>
       <div class="color" style="background-color: black;" @click="selectColor('black')"></div>
     </div>
+
+    <button class="button" @click="get_pixels"><span>Get Pixels</span></button>
   </div>
+
+  
+
 
   [[block page_scripts]]
   <!-- Loads the index-specific js for Vue -->
   <script>
     let my_callback_url = "[[=XML(my_callback_url)]]";
     let get_pixels_url = "[[=XML(get_pixels_url)]]";
+    let draw_url = "[[=XML(draw_url)]]";
+
   </script>
   <script src="js/index.js"></script>
   [[end]]

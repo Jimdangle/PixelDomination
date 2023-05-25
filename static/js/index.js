@@ -12,6 +12,7 @@ let init = (app) => {
   // color     : color to draw pixel
   app.data = {
     // Complete as you see fit.
+    last_draw: 0,
     canvas: null,
     ctx: null,
     isDrawing: false,
@@ -52,11 +53,17 @@ let init = (app) => {
     app.data.ctx.beginPath();
   };
 
+
+
   app.draw = (e) => {
     if (!app.data.isDrawing) return;
     let rect = app.data.canvas.getBoundingClientRect();
     let x = Math.floor((e.clientX - rect.left) / app.data.gridSize);
     let y = Math.floor((e.clientY - rect.top) / app.data.gridSize);
+    axios.post(draw_url,{params: {x:x,y:y}}).then(function (r) {
+            
+        
+    });
     app.data.ctx.fillStyle = app.data.selectedColor;
     app.data.ctx.fillRect(
       x * app.data.gridSize,
@@ -70,6 +77,19 @@ let init = (app) => {
     app.data.selectedColor = color;
   };
 
+  app.get_pixels = function() {
+    console.log("Getting pixels")
+    axios({
+        method: "get",
+        url: get_pixels_url
+    })
+    .then( (r) => {
+        console.log(r.data)
+        console.log(r.data.pixels)
+    })
+    .catch( (e) => {console.log(e)})
+  }
+
   // This contains all the methods.
   app.methods = {
     // Complete as you see fit.
@@ -78,6 +98,7 @@ let init = (app) => {
     draw: app.draw,
     startDrawing: app.startDrawing,
     stopDrawing: app.stopDrawing,
+    get_pixels: app.get_pixels,
   };
 
   // This creates the Vue instance.
