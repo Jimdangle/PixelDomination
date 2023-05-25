@@ -29,14 +29,26 @@ from py4web import action, request, abort, redirect, URL
 from yatl.helpers import A
 from .common import db, session, T, cache, auth, logger, authenticated, unauthenticated, flash
 from py4web.utils.url_signer import URLSigner
-from .models import get_user_email
+from .models import get_user_email, get_time_timestamp
 
 url_signer = URLSigner(session)
 
 @action('index')
 @action.uses('index.html', db, auth.user, url_signer)
 def index():
+    print(get_time_timestamp())
     return dict(
         # COMPLETE: return here any signed URLs you need.
         my_callback_url = URL('my_callback', signer=url_signer),
+        get_pixels_url   = URL('get_pixels', signer=url_signer)
     )
+
+@action('get_pixels', method=["GET"])
+@action.uses('index.html', db, auth.user, url_signer.verify())
+def get_pixesl():
+    pixels = db(db.Board.pos_x != None).select()
+
+    return dict(
+        pixels = pixels
+    )
+
