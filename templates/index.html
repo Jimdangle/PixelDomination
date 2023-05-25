@@ -20,34 +20,37 @@
       display: inline-block;
       margin: 2px;
     }
+
+    .expand {
+      display: flex;
+      flex-direction: row;
+    }
+
   </style>
 </head>
 
 <body>
   <div class="section" id="vue-target">
     <canvas ref="myCanvas" width="500" height="500"></canvas>
+    
+    <div class="expand">
 
-    <div>
-      <div class="color" style="background-color: red;" @click="selectColor('red')"></div>
-      <div class="color" style="background-color: green;" @click="selectColor('green')"></div>
-      <div class="color" style="background-color: blue;" @click="selectColor('blue')"></div>
-      <div class="color" style="background-color: yellow;" @click="selectColor('yellow')"></div>
-      <div class="color" style="background-color: black;" @click="selectColor('black')"></div>
+      <div v-if="!colorSelectorShown" class="color currentcolor" :style="{ backgroundColor: selectedColor }" @click="toggleColorSelector()"></div>
+      <div v-show="colorSelectorShown">
+        <div class="color" :style="{ backgroundColor: 'black' }" @click="selectColor('black'); toggleColorSelector()"></div>
+        <div class="color" :style="{ backgroundColor: 'red' }" @click="selectColor('red'); toggleColorSelector()"></div>
+        <div class="color" :style="{ backgroundColor: 'green' }" @click="selectColor('green'); toggleColorSelector()"></div>
+        <div class="color" :style="{ backgroundColor: 'blue' }" @click="selectColor('blue'); toggleColorSelector()"></div>
+        <div class="color" :style="{ backgroundColor: 'yellow' }" @click="selectColor('yellow'); toggleColorSelector()"></div>
+      </div>
     </div>
-
-    <button class="button" @click="get_pixels"><span>Get Pixels</span></button>
-  </div>
-
-  
-
+    
 
   [[block page_scripts]]
   <!-- Loads the index-specific js for Vue -->
   <script>
     let my_callback_url = "[[=XML(my_callback_url)]]";
     let get_pixels_url = "[[=XML(get_pixels_url)]]";
-    let draw_url = "[[=XML(draw_url)]]";
-
   </script>
   <script src="js/index.js"></script>
   [[end]]
