@@ -35,6 +35,9 @@
       <div class="color" style="background-color: black;" id="black"></div>
     </div>
 
+    <button class="button" @click="add_pixel()">"Add Pixel"</button>
+
+    
   </div>
 
   <script>
@@ -75,6 +78,7 @@
       let rect = canvas.getBoundingClientRect();
       let x = Math.floor((e.clientX - rect.left) / gridSize);
       let y = Math.floor((e.clientY - rect.top) / gridSize);
+      
       ctx.fillStyle = selectedColor;
       ctx.fillRect(x * gridSize, y * gridSize, gridSize, gridSize);
     }
@@ -95,8 +99,8 @@
 [[block page_scripts]]
 <!-- Loads the index-specific js for Vue -->
 <script>
-  let my_callback_url = "[[=XML(my_callback_url)]]";
-  let get_pixels_url = "[[=XML(get_pixels_url)]]"
+  let get_pixels_url = "[[=XML(get_pixels_url)]]";
+  let add_pixel_url  = "[[=XML(add_pixel_url)]]";
 </script>
 <script src="js/index.js"></script>
 [[end]]

@@ -40,8 +40,21 @@ def index():
     return dict(
         # COMPLETE: return here any signed URLs you need.
         my_callback_url = URL('my_callback', signer=url_signer),
-        get_pixels_url   = URL('get_pixels', signer=url_signer)
+        get_pixels_url = URL('get_pixels', signer=url_signer),
+        add_pixel_url = URL('add_pixel', signer=url_signer)
     )
+
+@action('add_pixel', method=["POST"])
+@action.uses(db, auth.user, url_signer.verify())
+def add_pixels():
+    pos_x = int(request.params.get('pos_x'))
+    pos_y = int(request.params.get('pos_y'))
+    color = request.params.get('color')
+
+    db((db.Board.pos_x == pos_x) & (db.Board.pos_y == pos_y)).delete()
+    db.Board.insert(pos_x=pos_x, pos_y=pos_y, color=color)
+
+    return "ok"
 
 @action('get_pixels', method=["GET"])
 @action.uses('index.html', db, auth.user, url_signer.verify())

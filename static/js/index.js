@@ -18,8 +18,9 @@ let init = (app) => {
         pos_x: 0,
         pos_y: 0,
         color: 'black',
-        canv: this.$refs.canvas,
-        ctx:  canv.getContext('2d')
+        canv: document.getElementById('myCanvas'),
+        ctx:  document.getElementById('myCanvas').getContext('2d'),
+        draw_points: []
 
     };
 
@@ -31,35 +32,44 @@ let init = (app) => {
     };
 
 
-    app.draw_grid = (gridSize) => {
-        for (let i = 0; i < app.canvas.width / gridSize; i++) {
-          for (let j = 0; j < app.canvas.height / gridSize; j++) {
-            ctx.strokeStyle = 'rgba(0,0,0,0.1)';
-            ctx.strokeRect(i * gridSize, j * gridSize, gridSize, gridSize);
-          }
-        }
-      }
+    app.get_pixels = function() {
+        axios({
+            method: "get",
+            url: get_pixels_url
+        })
+        .then( (r) => {
+            console.log(r.data);
+        })
+        .catch( (e) => {
+            console.debug(e);
+        })
+    }
     
 
-    // 
-
-    app.draw = (e) => {
-        time_diff = Math.floor((Date.now() - app.last_draw) / 1000)
-        if (time_diff > 300){ // its been 5 min? 
-            let rect = app.canv.getBoundingClientRect();
-            let x = Math.floor(( e.clientX - rect.left))
-        }
-    }
-
-    app.load_pixels() = () => {
-
-
+    
+    app.add_pixel = function() {
+        axios({
+            method: "post",
+            url: add_pixel_url,
+            params: {
+                pos_x: 1,
+                pos_y: 1,
+                color: 'green'
+            }
+        })
+        .then( (r) => {
+            console.log(r.data)
+        })
+        .catch( (e) => {
+            console.debug(e)
+        })
     }
 
     // This contains all the methods.
     app.methods = {
         // Complete as you see fit.
-        draw_grid: app.draw_grid(),
+        add_pixel: app.add_pixel(),
+        get_pixels: app.get_pixels()
 
 
     };
@@ -73,7 +83,7 @@ let init = (app) => {
 
     // And this initializes it.
     app.init = () => {
-
+        app.get_pixels()
         // Put here any initialization code.
         // Typically this is a server GET call to load the data.
     };
