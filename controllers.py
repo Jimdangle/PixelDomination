@@ -40,7 +40,8 @@ def index():
     return dict(
         # COMPLETE: return here any signed URLs you need.
         my_callback_url = URL('my_callback', signer=url_signer),
-        get_pixels_url   = URL('get_pixels', signer=url_signer)
+        get_pixels_url  = URL('get_pixels', signer=url_signer),
+        draw_url        = URL('draw_url', signer=url_signer),
     )
 
 @action('draw_url', method="POST")
