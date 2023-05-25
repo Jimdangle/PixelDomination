@@ -18,6 +18,7 @@ let init = (app) => {
     isDrawing: false,
     gridSize: 20,
     selectedColor: "black",
+    colorSelectorShown: false,
   };
 
   app.enumerate = (a) => {
@@ -94,6 +95,10 @@ let init = (app) => {
     app.data.selectedColor = color;
   };
 
+  app.toggleColorSelector = () => {
+    app.data.colorSelectorShown = !app.data.colorSelectorShown;
+  };
+
   app.get_pixels = function() {
     console.log("Getting pixels")
     axios({
@@ -116,6 +121,7 @@ let init = (app) => {
     startDrawing: app.startDrawing,
     stopDrawing: app.stopDrawing,
     get_pixels: app.get_pixels,
+    toggleColorSelector: app.toggleColorSelector,
   };
 
   // This creates the Vue instance.
