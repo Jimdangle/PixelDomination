@@ -30,8 +30,6 @@ db.define_table('Board',
                 Field('color', 'string', required=True, requires=IS_IN_SET(["black","yellow","blue","green","red"]))
                 )
 
-db.commit()
-
 db.define_table('UClick',
                 Field('uid', 'references auth_user', required=True),
                 Field('last_click', 'integer', default=get_time_timestamp())
