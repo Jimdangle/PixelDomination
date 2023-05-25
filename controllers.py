@@ -43,6 +43,15 @@ def index():
         get_pixels_url   = URL('get_pixels', signer=url_signer)
     )
 
+@action('draw_url', method="POST")
+@action.uses(session, db, auth.user, url_signer.verify())
+def draw_url():
+    x = request.params.x
+    y = request.params.y
+    id = db.Board.insert(pos_x = x, pos_y = y, color = "black")
+
+    return "ok"
+
 @action('get_pixels')
 @action.uses(db, auth.user, url_signer.verify())
 def get_pixesl():
