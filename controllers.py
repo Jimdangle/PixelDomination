@@ -43,12 +43,12 @@ def index():
         get_pixels_url   = URL('get_pixels', signer=url_signer)
     )
 
-@action('get_pixels', method=["GET"])
-@action.uses('index.html', db, auth.user, url_signer.verify())
+@action('get_pixels')
+@action.uses(db, auth.user, url_signer.verify())
 def get_pixesl():
     pixels = db(db.Board.pos_x != None).select()
-
+    
     return dict(
-        pixels = pixels
+        pixels = pixels,
     )
 
