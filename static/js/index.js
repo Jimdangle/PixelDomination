@@ -54,24 +54,41 @@ let init = (app) => {
   };
 
 
-
-  app.draw = (e) => {
-    if (!app.data.isDrawing) return;
-    let rect = app.data.canvas.getBoundingClientRect();
-    let x = Math.floor((e.clientX - rect.left) / app.data.gridSize);
-    let y = Math.floor((e.clientY - rect.top) / app.data.gridSize);
-    axios.post(draw_url,{params: {x:x,y:y}}).then(function (r) {
-            
-        
-    });
-    app.data.ctx.fillStyle = app.data.selectedColor;
+  /**
+   * app.data.ctx.fillStyle = app.data.selectedColor;
     app.data.ctx.fillRect(
       x * app.data.gridSize,
       y * app.data.gridSize,
       app.data.gridSize,
       app.data.gridSize
     );
+   */
+
+
+  app.draw = (e) => {
+
+    if (!app.data.isDrawing) return;
+    let rect = app.data.canvas.getBoundingClientRect();
+    let x = Math.floor((e.clientX - rect.left) / app.data.gridSize);
+    let y = Math.floor((e.clientY - rect.top) / app.data.gridSize);
+    let color = app.data.selectedColor;
+    axios({
+      method: "post",
+      url: draw_url,
+      params: 
+        {
+          x:x,
+          y:y,
+          color:color
+        }
+      })
+    .then(function (r) {
+            console.debug(r.data) 
+    })
+    .catch( (e) => {console.log(e)})
   };
+
+ 
 
   app.selectColor = (color) => {
     app.data.selectedColor = color;
