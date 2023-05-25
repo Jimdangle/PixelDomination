@@ -25,8 +25,8 @@ def get_time_timestamp():
 ## always commit your models to avoid problems later
 
 db.define_table('Board',
-                Field('pos_x','integer',required=True, unique=True),
-                Field('pos_y', 'integer', required=True,unique=True),
+                Field('pos_x','integer',required=True),
+                Field('pos_y', 'integer', required=True),
                 Field('color', 'string', required=True, requires=IS_IN_SET(["black","yellow","blue","green","red"]))
                 )
 
