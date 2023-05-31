@@ -17,8 +17,8 @@ let init = (app) => {
     ctx: null,
     isDrawing: false,
     gridSize: 20,
-    gridWidth: 50,
-    gridHeight: 10,
+    gridWidth: 20,
+    gridHeight: 20,
     selectedColor: "black",
     colorSelectorShown: false,
   };
@@ -97,8 +97,35 @@ let init = (app) => {
       })
     .then(function (r) {
             console.debug(r.data) 
+
+            for (let p in r.data.pixels){
+              console.log (r.data.pixels[p]["pos_x"]);
+
+              x = parseInt(r.data.pixels[p]["pos_x"]);
+              y = parseInt(r.data.pixels[p]["pos_y"]);
+              console.log("x: " + x + " y: " + y);
+              color = r.data.pixels[p]["color"];
+
+              app.data.ctx.fillStyle = color;
+              app.data.ctx.fillRect(
+                y * app.data.gridSize,
+                x * app.data.gridSize,
+                app.data.gridSize,
+                app.data.gridSize
+              );
+                
+            }
+
+
+        
+            
+
+
     })
     .catch( (e) => {console.log(e)})
+
+
+
   };
 
  
@@ -161,6 +188,41 @@ let init = (app) => {
     // Set the canvas size
     app.data.canvas.width = app.data.gridSize * app.data.gridWidth;
     app.data.canvas.height = app.data.gridSize * app.data.gridHeight;
+
+    //grab all the pixels already drawn from the database
+    axios({
+      method: "post",
+      url: draw_url,
+      params: 
+        {
+          x:0,
+          y:0,
+          color:"init"
+        }
+      })
+    .then(function (r) {
+            console.debug(r.data) 
+
+            for (let p in r.data.pixels){
+              console.log (r.data.pixels[p]["pos_x"]);
+
+              x = parseInt(r.data.pixels[p]["pos_x"]);
+              y = parseInt(r.data.pixels[p]["pos_y"]);
+              console.log("x: " + x + " y: " + y);
+              color = r.data.pixels[p]["color"];
+
+              app.data.ctx.fillStyle = color;
+              app.data.ctx.fillRect(
+                y * app.data.gridSize,
+                x * app.data.gridSize,
+                app.data.gridSize,
+                app.data.gridSize
+              );
+                
+            }
+    })
+    .catch( (e) => {console.log(e)})
+
   };
 
   // Call to the initializer.
