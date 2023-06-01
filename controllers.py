@@ -55,6 +55,21 @@ def play():
         draw_url        = URL('draw_url', signer=url_signer),
     )
 
+@action('browser')
+@action.uses('browser.html', db, auth)
+def browser():
+    return dict()
+
+@action('leaderboard')
+@action.uses('leaderboard.html', db, auth)
+def leaderboard():
+    return dict()
+
+@action('stats')
+@action.uses('stats.html', db, auth)
+def stats():
+    return dict()
+
 @action('draw_url', method="POST")
 @action.uses(session, db, auth.user, url_signer.verify())
 def draw_url():
