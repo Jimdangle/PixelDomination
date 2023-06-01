@@ -15,7 +15,7 @@ let init = (app) => {
     cameraOffset: { x: 0, y: 0 },
     cameraZoom: 1,
     MAX_ZOOM: 5,
-    MIN_ZOOM: 0.99,
+    MIN_ZOOM: 0.8,
     SCROLL_SENSITIVITY: 0.001,
     colors: ["black", "red", "green", "blue", "yellow"],
     selectedColor: "black",
@@ -24,6 +24,7 @@ let init = (app) => {
     isDragging: false,
     colorSelectorShown: false,
     leaderBoardExpanded: false,
+    updateInterval: 10000,
   };
 
   app.toggleLeaderBoard = () => {
@@ -296,7 +297,8 @@ let init = (app) => {
     }
 
     app.get_pixels();
-    setInterval(app.get_pixels, 10000); // Get Pixels every 10 seconds
+    // TODO - fix race condition where pixel is posted before the get_pixels request is finished
+    setInterval(app.get_pixels, app.data.updateInterval); // Get Pixels every 10 seconds
 
     // Add the event listeners
     app.data.canvas.addEventListener("mousedown", app.mousedown.bind(this));
