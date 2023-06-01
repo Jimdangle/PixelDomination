@@ -92,7 +92,8 @@ let init = (app) => {
         {
           x:x,
           y:y,
-          color:color
+          color:color,
+          click_time: Date.now()
         }
       })
     .then(function (r) {
@@ -145,14 +146,10 @@ let init = (app) => {
         url: get_pixels_url
     })
     .then( (r) => {
-      console.log("Got pixels")
         console.log(r.data)
         console.log(r.data.pixels)
-        // app.drawGrid();
     })
-    .catch( (e) => {
-      console.log("Failed to get pixels")
-      console.log(e)})
+    .catch( (e) => {console.log(e)})
   }
 
   // This contains all the methods.
@@ -195,14 +192,8 @@ let init = (app) => {
 
     //grab all the pixels already drawn from the database
     axios({
-      method: "post",
-      url: draw_url,
-      params: 
-        {
-          x:0,
-          y:0,
-          color:"init"
-        }
+      method: "get",
+      url: get_pixels_url,
       })
     .then(function (r) {
             console.debug(r.data) 

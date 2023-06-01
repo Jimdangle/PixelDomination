@@ -44,21 +44,35 @@ def index():
         draw_url        = URL('draw_url', signer=url_signer),
     )
 
+@action('play')
+@action.uses('play.html', db, auth.user, url_signer)
+def play():
+    return dict(
+        my_callback_url = URL('my_callback', signer=url_signer),
+        get_pixels_url  = URL('get_pixels', signer=url_signer),
+        draw_url        = URL('draw_url', signer=url_signer),
+    )
+
 @action('draw_url', method="POST")
 @action.uses(session, db, auth.user, url_signer.verify())
 def draw_url():
     user = get_user_id()
+    
+    click_time = int(request.params.get('click_time')) # not init so get this info here 
     x = int(request.params.get('y'))
     y = int(request.params.get('x'))
     color = request.params.get('color')
 
-    if color == "init":
-        #don't do anything
-        print("initializing board")    
-    else:
-        print(f'Place pixel at {x},{y}, color {color}')
-        db((db.Board.pos_x==x) & (db.Board.pos_y==y)).delete()
-        id = db.Board.insert(uid = user, pos_x = x, pos_y = y, color = color)
+    rows = db(db.Ply_Stats.user == user).select()
+    if len(rows) == 0: #first time a user has clicked
+        db.Ply_Stats.insert(user=user, last_click = click_time) #insert into stats table
+
+
+    
+    print(f'Place pixel at {x},{y}, color {color}')
+    db((db.Board.pos_x==x) & (db.Board.pos_y==y)).delete()
+    id = db.Board.insert(uid = user, pos_x = x, pos_y = y, color = color)
+    db(db.Ply_Stats.user==user).update(total_clicks=db.Ply_Stats.total_clicks+1) #update clicks
     
     pixels = db(db.Board.color != None).select()
     return dict(pixels=pixels)
@@ -66,6 +80,7 @@ def draw_url():
 @action('get_pixels')
 @action.uses(db, auth.user, url_signer.verify())
 def get_pixesl():
+    # TODO change this to the size of the board
     pixels = [[None for i in range(100)] for j in range(100)]
     # fill in the pixels
     for pixel in db(db.Board.pos_x != None).select():
