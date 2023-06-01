@@ -1,11 +1,28 @@
 
 [[extend 'layout.html']]
 
+
+
 <head>
   <title>User Stats - Pixel Domination</title>
 </head>
 
 <body>
   <div class="section" id="vue-target">
+    <h1 class="title is-1"> [[=ply.email]] Stats</h1>
+    <div class="columns">
+      <div class="column">
+        <h3 class="subtitle is-3"> Total Clicks </h3>
+        <h3 class="subtitle is-3"> Last Click </h3>
+        <h3 class="subtitle is-3"> Last Game </h3>
+      </div>
+      <div class="column">
+        <h3 class="subtitle is-3"> [[=ply.total_clicks]] </h3>
+        <h3 class="subtitle is-3"> [[=ply.last_click]] </h3>
+        <h3 class="subtitle is-3"> [[=ply.last_game_id]] </h3>
+      </div>
+    </div>
+    
   </div>
+  
 </body>
