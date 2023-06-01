@@ -67,7 +67,7 @@ def leaderboard():
     return dict()
 
 @action('stats')
-@action.uses('stats.html', db, auth)
+@action.uses('stats.html', db, auth.user)
 def stats():
     user = get_user_id() # get user id
     check_if_stats_exist(user) # if they don't have a place give them one 
