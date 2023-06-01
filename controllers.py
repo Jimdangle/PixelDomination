@@ -29,7 +29,7 @@ from py4web import action, request, abort, redirect, URL
 from yatl.helpers import A
 from .common import db, session, T, cache, auth, logger, authenticated, unauthenticated, flash
 from py4web.utils.url_signer import URLSigner
-from .models import get_user_email, get_time_timestamp
+from .models import get_user_email, get_time_timestamp, get_user_id
 
 url_signer = URLSigner(session)
 
@@ -47,7 +47,7 @@ def index():
 @action('draw_url', method="POST")
 @action.uses(session, db, auth.user, url_signer.verify())
 def draw_url():
-
+    user = get_user_id()
     x = int(request.params.get('y'))
     y = int(request.params.get('x'))
     color = request.params.get('color')
@@ -58,7 +58,7 @@ def draw_url():
     else:
         print(f'Place pixel at {x},{y}, color {color}')
         db((db.Board.pos_x==x) & (db.Board.pos_y==y)).delete()
-        id = db.Board.insert(pos_x = x, pos_y = y, color = color)
+        id = db.Board.insert(uid = user, pos_x = x, pos_y = y, color = color)
     
     pixels = db(db.Board.color != None).select()
     return dict(pixels=pixels)
