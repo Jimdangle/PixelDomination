@@ -47,15 +47,21 @@ def index():
 @action('draw_url', method="POST")
 @action.uses(session, db, auth.user, url_signer.verify())
 def draw_url():
+
     x = int(request.params.get('y'))
     y = int(request.params.get('x'))
     color = request.params.get('color')
 
-    print(f'Place pixel at {x},{y}, color {color}')
-    db((db.Board.pos_x==x) & (db.Board.pos_y==y)).delete()
-    id = db.Board.insert(pos_x = x, pos_y = y, color = "black")
-
-    return "ok"
+    if color == "init":
+        #don't do anything
+        print("initializing board")    
+    else:
+        print(f'Place pixel at {x},{y}, color {color}')
+        db((db.Board.pos_x==x) & (db.Board.pos_y==y)).delete()
+        id = db.Board.insert(pos_x = x, pos_y = y, color = color)
+    
+    pixels = db(db.Board.color != None).select()
+    return dict(pixels=pixels)
 
 @action('get_pixels')
 @action.uses(db, auth.user, url_signer.verify())
