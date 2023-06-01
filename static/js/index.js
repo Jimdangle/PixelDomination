@@ -192,14 +192,8 @@ let init = (app) => {
 
     //grab all the pixels already drawn from the database
     axios({
-      method: "post",
-      url: draw_url,
-      params: 
-        {
-          x:0,
-          y:0,
-          color:"init"
-        }
+      method: "get",
+      url: get_pixels_url,
       })
     .then(function (r) {
             console.debug(r.data) 
