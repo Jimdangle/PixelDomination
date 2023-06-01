@@ -66,9 +66,11 @@ def draw_url():
 @action('get_pixels')
 @action.uses(db, auth.user, url_signer.verify())
 def get_pixesl():
-    pixels = db(db.Board.pos_x != None).select()
-    
+    pixels = [[None for i in range(100)] for j in range(100)]
+    # fill in the pixels
+    for pixel in db(db.Board.pos_x != None).select():
+        pixels[pixel.pos_x][pixel.pos_y] = pixel.color
+        
     return dict(
         pixels = pixels,
     )
-

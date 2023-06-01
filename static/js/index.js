@@ -145,10 +145,14 @@ let init = (app) => {
         url: get_pixels_url
     })
     .then( (r) => {
+      console.log("Got pixels")
         console.log(r.data)
         console.log(r.data.pixels)
+        // app.drawGrid();
     })
-    .catch( (e) => {console.log(e)})
+    .catch( (e) => {
+      console.log("Failed to get pixels")
+      console.log(e)})
   }
 
   // This contains all the methods.
