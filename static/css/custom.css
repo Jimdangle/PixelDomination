@@ -1,0 +1,58 @@
+#canvas {
+  border: 1px solid #000;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+}
+
+.color {
+  width: 50px;
+  height: 50px;
+  display: inline-block;
+  margin: 2px;
+}
+
+.expand {
+  display: flex;
+  flex-direction: row;
+  user-select: none;
+}
+
+.colorSelector {
+  display: flex;
+}
+
+.centering {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.leaderboard-container {
+  background-color: rgba(128, 128, 128, 0.9);
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
+  color: white;
+  margin: 5px;
+  user-select: none;
+}
+
+.leaderboard-heading {
+  margin-top: 0;
+}
+
+.leaderboard-items {
+  display: flex;
+  flex-direction: column;
+
+}
+
+.leaderboard-items.show {
+  display: block;
+}
+
+.leaderboard-item {
+  padding: 5px;
+}

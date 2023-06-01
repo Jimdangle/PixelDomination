@@ -1,0 +1,70 @@
+[[extend 'layout-noFooter.html']]
+
+<style>
+  [v-cloak] {
+    display: none;
+  }
+</style>
+
+<head>
+  <title>Drawable Grid</title>
+  <link rel="stylesheet" href="css/custom.css" />
+</head>
+
+<body>
+  <div
+    id="vue-target"
+    class="centering"
+    style="display: flex; justify-content: center; align-items: center"
+  >
+    <div
+      class="canvas_container"
+      style="width: 80vw; height: 80vh; position: relative"
+    >
+      <canvas id="canvas" ref="canvas" style="user-select: none"></canvas>
+      <div id="color-picker" style="position: absolute; bottom: 0; left: 0">
+        <div class="expand">
+          <div
+            class="color currentcolor"
+            style="background-color: black"
+            @click="toggleColorSelector()"
+          ></div>
+          <div class="colorSelector" v-show="colorSelectorShown">
+            <div
+              class="color"
+              v-for="color in colors"
+              :style="{ backgroundColor: color }"
+              v-show="color !== selectedColor"
+              @click="selectColor(color)"
+            ></div>
+          </div>
+        </div>
+      </div>
+      <div
+        id="leaderboard"
+        class="leaderboard-container"
+        style="position: absolute; top: 0; left: 0"
+      >
+        <h2 class="leaderboard-heading" @click="toggleLeaderBoard">
+          Leaderboard
+        </h2>
+        <div class="leaderboard-items" v-show="leaderBoardExpanded">
+          <div class="leaderboard-item">Player 1</div>
+          <div class="leaderboard-item">Player 2</div>
+          <div class="leaderboard-item">Player 3</div>
+          <!-- Add more leaderboard items here -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  [[block page_scripts]]
+  <!-- Loads the index-specific js for Vue -->
+  <script>
+    let my_callback_url = "[[=XML(my_callback_url)]]";
+    let get_pixels_url = "[[=XML(get_pixels_url)]]";
+    let draw_url = "[[=XML(draw_url)]]";
+  </script>
+  <script src="js/play.js"></script>
+  [[end]]
+</body>
