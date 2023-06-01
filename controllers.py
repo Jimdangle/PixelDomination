@@ -51,26 +51,21 @@ def index():
 def draw_url():
     user = get_user_id()
     
+    click_time = int(request.params.get('click_time')) # not init so get this info here 
     x = int(request.params.get('y'))
     y = int(request.params.get('x'))
     color = request.params.get('color')
 
+    rows = db(db.Ply_Stats.user == user).select()
+    if len(rows) == 0: #first time a user has clicked
+        db.Ply_Stats.insert(user=user, last_click = click_time) #insert into stats table
 
 
-
-    if color == "init":
-        #don't do anything
-        print("initializing board")    
-    else:
-        click_time = int(request.params.get('click_time')) # not init so get this info here 
-        rows = db(db.Ply_Stats.user == user).select()
-        if len(rows) == 0: #first time a user has clicked
-            db.Ply_Stats.insert(user=user, last_click = click_time) #insert into stats table
     
-        print(f'Place pixel at {x},{y}, color {color}')
-        db((db.Board.pos_x==x) & (db.Board.pos_y==y)).delete()
-        id = db.Board.insert(uid = user, pos_x = x, pos_y = y, color = color)
-        db(db.Ply_Stats.user==user).update(total_clicks=db.Ply_Stats.total_clicks+1) #update clicks
+    print(f'Place pixel at {x},{y}, color {color}')
+    db((db.Board.pos_x==x) & (db.Board.pos_y==y)).delete()
+    id = db.Board.insert(uid = user, pos_x = x, pos_y = y, color = color)
+    db(db.Ply_Stats.user==user).update(total_clicks=db.Ply_Stats.total_clicks+1) #update clicks
     
     pixels = db(db.Board.color != None).select()
     return dict(pixels=pixels)
