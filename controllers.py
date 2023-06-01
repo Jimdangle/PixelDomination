@@ -46,6 +46,15 @@ def index():
         draw_url        = URL('draw_url', signer=url_signer),
     )
 
+@action('play')
+@action.uses('play.html', db, auth.user, url_signer)
+def play():
+    return dict(
+        my_callback_url = URL('my_callback', signer=url_signer),
+        get_pixels_url  = URL('get_pixels', signer=url_signer),
+        draw_url        = URL('draw_url', signer=url_signer),
+    )
+
 @action('draw_url', method="POST")
 @action.uses(session, db, auth.user, url_signer.verify())
 def draw_url():
@@ -73,8 +82,12 @@ def draw_url():
 @action('get_pixels')
 @action.uses(db, auth.user, url_signer.verify())
 def get_pixesl():
-    pixels = db(db.Board.pos_x != None).select()
-    
+    # TODO change this to the size of the board
+    pixels = [[None for i in range(100)] for j in range(100)]
+    # fill in the pixels
+    for pixel in db(db.Board.pos_x != None).select():
+        pixels[pixel.pos_x][pixel.pos_y] = pixel.color
+        
     return dict(
         pixels = pixels,
     )
