@@ -92,7 +92,8 @@ let init = (app) => {
         {
           x:x,
           y:y,
-          color:color
+          color:color,
+          click_time: Date.now()
         }
       })
     .then(function (r) {
