@@ -33,9 +33,21 @@ db.define_table('Board',
                 Field('color', 'string', required=True,)
                 )
 
+db.commit()
+
 db.define_table('UClick',
                 Field('uid', 'references auth_user', required=True),
                 Field('last_click', 'integer', default=get_time_timestamp())
                 )
+
+db.commit()
+
+db.define_table('Ply_Stats',
+                Field('user', 'references auth_user', required=True, unique=True),
+                Field('total_clicks', 'integer', default=0),
+                Field('last_click', 'integer'),
+                Field('last_game_id', 'integer')
+                )
+
 
 db.commit()
