@@ -17,10 +17,28 @@ let init = (app) => {
     MAX_ZOOM: 5,
     MIN_ZOOM: 0.99,
     SCROLL_SENSITIVITY: 0.001,
-    color: "#000",
+    colors: ["black", "red", "green", "blue", "yellow"],
+    selectedColor: "black",
     animationFrameId: null,
     lastDragPoint: { x: 0, y: 0 },
     isDragging: false,
+    colorSelectorShown: false,
+    leaderBoardExpanded: false,
+  };
+
+  app.toggleLeaderBoard = () => {
+    app.data.leaderBoardExpanded = !app.data.leaderBoardExpanded;
+  };
+
+  app.toggleColorSelector = () => {
+    app.data.colorSelectorShown = !app.data.colorSelectorShown;
+  };
+
+  app.selectColor = function (color) {
+    app.data.selectedColor = color;
+    let currentColorDiv = document.querySelector(".currentcolor");
+    currentColorDiv.style.backgroundColor = color;
+    app.toggleColorSelector();
   };
 
   app.mousedown = function (event) {
@@ -73,7 +91,6 @@ let init = (app) => {
   };
 
   app.drawGrid = function () {
-    // console.log("Drawing grid")
     if (app.data.animationFrameId !== null) {
       cancelAnimationFrame(app.data.animationFrameId);
     }
@@ -197,24 +214,21 @@ let init = (app) => {
       gridY >= 0 &&
       gridY < app.data.totalRows
     ) {
-      // Call API to draw
-      console.log("x: " + gridX + " y: " + gridY + " color: #000000");
+      console.log("x: " + gridX + " y: " + gridY + " color: " + app.data.selectedColor);
       axios({
         method: "post",
         url: draw_url,
         params: {
           x: gridX,
           y: gridY,
-          color: "#000000",
+          color: app.data.selectedColor,
         },
       })
         .then((r) => {
-          // On successful response, update cell color and redraw grid
-          app.data.cells[gridY][gridX] = "#000000";
+          app.data.cells[gridY][gridX] = app.data.selectedColor;
           app.drawGrid();
         })
         .catch((e) => {
-          // On error, log it
           console.log(e);
         });
     }
@@ -227,8 +241,6 @@ let init = (app) => {
     })
       .then((r) => {
         console.log("Got pixels");
-        // set app.data.cells to r.data.cells
-        // console.log(r.data.pixels)
         app.data.cells = r.data.pixels;
         app.drawGrid();
       })
@@ -245,12 +257,20 @@ let init = (app) => {
     mousemove: app.mousemove,
     wheel: app.wheel,
     dblclick: app.dblclick,
-    // initCells: app.initCells,
+    toggleColorSelector: app.toggleColorSelector,
     get_pixels: app.get_pixels,
+    selectColor: app.selectColor,
+    toggleLeaderBoard: app.toggleLeaderBoard,
   };
 
+  app.vue = new Vue({
+    el: "#vue-target",
+    data: app.data,
+    methods: app.methods,
+  });
+
   app.init = function () {
-    const canvasContainer = document.querySelector('.canvas_container');
+    const canvasContainer = document.querySelector(".canvas_container");
     app.data.canvas = document.getElementById("canvas");
     app.data.context = app.data.canvas.getContext("2d");
     // app.data.canvas.width = window.innerWidth;
