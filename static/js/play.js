@@ -222,6 +222,7 @@ let init = (app) => {
           x: gridX,
           y: gridY,
           color: app.data.selectedColor,
+          click_time: Date.now(),
         },
       })
         .then((r) => {
