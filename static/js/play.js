@@ -221,8 +221,7 @@ let init = (app) => {
   };
 
   app.get_pixels = function () {
-    console.log("get_pixels");
-    return axios({
+    axios({
       method: "get",
       url: get_pixels_url,
     })
@@ -276,6 +275,7 @@ let init = (app) => {
     }
 
     app.get_pixels();
+    setInterval(app.get_pixels, 10000); // Get Pixels every 10 seconds
 
     // Add the event listeners
     app.data.canvas.addEventListener("mousedown", app.mousedown.bind(this));
