@@ -31,6 +31,8 @@
 
 <body>
   <div class="section" id="vue-target">
+    <div><button class="button" @click="start_new_game">Start a new game</button></div>
+    <!--
     <div class="columns">
       <div class="column">
         <div class=""container>
@@ -97,6 +99,7 @@
         <button class="button" @click="get_pixels"><span>Get Pixels</span></button>
       </div>
     </div>
+    -->
   </div>
 
  
@@ -106,6 +109,7 @@
   <script>
     let my_callback_url = "[[=XML(my_callback_url)]]";
     let get_pixels_url = "[[=XML(get_pixels_url)]]";
+    let get_new_game_url = "[[=XML(get_new_game_url)]]";
     let draw_url = "[[=XML(draw_url)]]"
   </script>
   <script src="js/index.js"></script>

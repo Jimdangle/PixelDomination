@@ -30,7 +30,15 @@ db.define_table('Board',
                 Field('uid','integer',required=True),
                 Field('pos_x','integer',required=True),
                 Field('pos_y', 'integer', required=True),
-                Field('color', 'string', required=True,)
+                Field('color', 'string', required=True,),
+                Field('game_id', 'integer', required=False,)
+                )
+
+db.commit()
+
+db.define_table('Games',
+                Field('game_id','integer',required=True),
+                Field('time_started','integer',required=True)
                 )
 
 db.commit()
