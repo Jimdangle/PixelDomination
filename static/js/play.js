@@ -253,7 +253,12 @@ let init = (app) => {
       })
         .then((r) => {
           app.data.cells[gridY][gridX] = app.data.selectedColor;
-          app.drawGrid();
+          console.log("can move: " + r.data.can_move);
+          if (r.data.can_move){
+            app.drawGrid();
+          }
+          
+
         })
         .catch((e) => {
           console.log(e);

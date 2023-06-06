@@ -38,7 +38,8 @@ db.commit()
 
 db.define_table('Games',
                 Field('game_id','integer',required=True),
-                Field('time_started','integer',required=True)
+                Field('time_started','integer',required=True),
+                Field('move_interval','integer',required=True)
                 )
 
 db.commit()
@@ -51,7 +52,7 @@ db.define_table('UClick',
 db.commit()
 
 db.define_table('Ply_Stats',
-                Field('user', 'references auth_user', required=True, unique=True),
+                Field('user', 'integer', required=True, unique=True),
                 Field('total_clicks', 'integer', default=0),
                 Field('last_click', 'integer'),
                 Field('last_game_id', 'integer')

@@ -61,7 +61,8 @@ def get_new_game_url():
         game_id = random.randint(0,10000)
     
     #at this point we have a unique game_id that currently doesn't exist, go ahead and create an entry in the Game table
-    id = db.Games.insert(game_id = game_id, time_started = get_time_timestamp())
+    #keep in mind move_interval is in seconds
+    id = db.Games.insert(game_id = game_id, time_started = get_time_timestamp(), move_interval = 10)
 
     #redirect the user to the Play url appended with the game_id as the parameter
     #redirect(URL('index'))
@@ -110,21 +111,53 @@ def stats():
 def draw_url():
     user = get_user_id()
     
+
+
     click_time = int(request.params.get('click_time')) # not init so get this info here 
     x = int(request.params.get('y'))
     y = int(request.params.get('x'))
     color = request.params.get('color')
     game_id = request.params.get('game_id')
 
-    check_if_stats_exist(user,click_time) # this will place the user in the stats table with the given click time
+
+    #first check if user can move (if enough time has passed)
+    cur_game_move_interval = db(db.Games.game_id == game_id).select(db.Games.move_interval)
+    last_click = db(db.Ply_Stats.user == get_user_id()).select(db.Ply_Stats.last_click)
     
-    print(f'Place pixel at {x},{y}, color {color}, game_id {game_id}')
-    db((db.Board.pos_x==x) & (db.Board.pos_y==y)).delete()
-    id = db.Board.insert(uid = user, pos_x = x, pos_y = y, color = color, game_id = game_id)
-    db(db.Ply_Stats.user==user).update(total_clicks=db.Ply_Stats.total_clicks+1,last_click=click_time) #update clicks
     
-    pixels = db(db.Board.color != None).select()
-    return dict(pixels=pixels)
+    
+    can_move = True
+
+    last_clicked = 0
+    if (last_click):
+        last_clicked = int(last_click[0].__getitem__('last_click') / 1000) 
+    game_interval = cur_game_move_interval[0].__getitem__('move_interval')
+    #account for timezone difference...
+    current_time = int(get_time_timestamp()) - 25200
+
+    print("stuff")
+    print(last_clicked)
+    print(current_time)
+
+    pixels = db(db.Board.game_id == game_id).select()
+
+    if current_time - last_clicked < game_interval:
+        #can't move yet
+        can_move = False
+        return dict(pixels=pixels,can_move=can_move)
+    else:
+        #can move, then insert the pixel
+        check_if_stats_exist(user,click_time) # this will place the user in the stats table with the given click time
+    
+        print(f'Place pixel at {x},{y}, color {color}, game_id {game_id}')
+    
+        db((db.Board.pos_x==x) & (db.Board.pos_y==y)).delete()
+        id = db.Board.insert(uid = user, pos_x = x, pos_y = y, color = color, game_id = game_id)
+        db(db.Ply_Stats.user==user).update(total_clicks=db.Ply_Stats.total_clicks+1,last_click=click_time,last_game_id=game_id) #update clicks
+    
+    
+   
+    return dict(pixels=pixels,can_move=can_move)
 
 @action('get_pixels')
 @action.uses(db, auth.user, url_signer.verify())
