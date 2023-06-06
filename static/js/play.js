@@ -1,5 +1,22 @@
 let app = {};
 
+
+var getUrlParameter = function getUrlParameter(sParam) {
+  var sPageURL = window.location.search.substring(1),
+      sURLVariables = sPageURL.split('&'),
+      sParameterName,
+      i;
+
+  for (i = 0; i < sURLVariables.length; i++) {
+      sParameterName = sURLVariables[i].split('=');
+
+      if (sParameterName[0] === sParam) {
+          return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+      }
+  }
+  return false;
+};
+
 let init = (app) => {
   app.data = {
     last_draw: 0,
@@ -24,6 +41,7 @@ let init = (app) => {
     isDragging: false,
     colorSelectorShown: false,
     leaderBoardExpanded: false,
+    game_id: 0,
     updateInterval: 10000,
   };
 
@@ -216,6 +234,12 @@ let init = (app) => {
       gridY < app.data.totalRows
     ) {
       console.log("x: " + gridX + " y: " + gridY + " color: " + app.data.selectedColor);
+      //console.log(this.$route.query.game_id) // outputs 'yay'
+
+      var game_id = getUrlParameter('game_id');
+      console.log("current game id: " + game_id);
+      app.data.game_id = game_id;
+
       axios({
         method: "post",
         url: draw_url,
@@ -224,6 +248,7 @@ let init = (app) => {
           y: gridY,
           color: app.data.selectedColor,
           click_time: Date.now(),
+          game_id: game_id,
         },
       })
         .then((r) => {
