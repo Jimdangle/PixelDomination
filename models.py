@@ -4,9 +4,9 @@ This file defines the database models
 
 ADJS = ["dead","hairless","sadistic","metal","wild","domesticated","abnormal","medicated","cocky","massive","hilarious","bearded","slimy","self-centered","talking","naked","angry"]
 
-NOUNS = ['blood rage', 'idiot', 'toaster', 'legend', 'death wish', 'therapy', 'psychic', 'knife', 'sandwich', 'hunting ground', 'lettuce', 'kitty', 'french chef', 'antidepressant drug', 'corn cake', 'president of the night', 'candlestick maker', 'coffee pot', 'brethren', 'national security agency', 'tank', 'useless brakes', 'international law enforcement agency', 'sound barrier', 'private investor', 'main people', 'stock car', 'elastic band', 'whole blood', 'telephone', 'mad cow disease']
+NOUNS = ['blood', 'idiot', 'toaster', 'legend', 'death', 'therapy', 'psychic', 'knife', 'sandwich', 'hunting', 'lettuce', 'kitty', 'french', 'antidepressant', 'corn', 'president', 'candlestick', 'coffee', 'brethren', 'nation', 'tank', 'Germany', 'sound barrier', 'private investor', 'main people', 'stock car', 'elastic band', 'whole blood', 'telephone', 'mad cow disease']
 
-
+N2 = ['rage', ' wish', 'ground' ,'chef', 'drug', 'cake', 'maker', 'pot', 'brakes']
 
 import datetime
 from .common import db, Field, auth
@@ -29,7 +29,8 @@ def gen_rand_name():
     random.seed(get_time_timestamp())
     adj = random.randint(1,len(ADJS))
     noun = random.randint(1,len(NOUNS))
-    name = f'{ADJS[adj]} {NOUNS[noun]}'
+    n2   = random.randint(1,len(N2))
+    name = f'{ADJS[adj]} {NOUNS[noun]} {N2[n2]}'
     print(name)
     return name
 
