@@ -41,7 +41,7 @@ let init = (app) => {
     isDragging: false,
     colorSelectorShown: false,
     leaderBoardExpanded: false,
-    game_id: 0,
+    game_id: getUrlParameter('game_id'),
     updateInterval: 10000,
   };
 
@@ -265,6 +265,9 @@ let init = (app) => {
     axios({
       method: "get",
       url: get_pixels_url,
+      params: {
+        game_id: app.data.game_id,
+      },
     })
       .then((r) => {
         console.log("Got pixels");
