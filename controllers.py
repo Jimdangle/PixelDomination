@@ -30,6 +30,7 @@ from yatl.helpers import A
 from .common import db, session, T, cache, auth, logger, authenticated, unauthenticated, flash
 from py4web.utils.url_signer import URLSigner
 from .models import get_user_email, get_time_timestamp, get_user_id
+import random
 
 from time import gmtime, strftime
 
@@ -42,14 +43,38 @@ def index():
     
     return dict(
         # COMPLETE: return here any signed URLs you need.
-        my_callback_url = URL('my_callback', signer=url_signer),
-        get_pixels_url  = URL('get_pixels', signer=url_signer),
-        draw_url        = URL('draw_url', signer=url_signer),
+        my_callback_url  = URL('my_callback', signer=url_signer),
+        get_pixels_url   = URL('get_pixels', signer=url_signer),
+        draw_url         = URL('draw_url', signer=url_signer),
+        get_new_game_url = URL('get_new_game_url', signer=url_signer),
     )
+
+@action('get_new_game_url', method="POST")
+@action.uses(session, db, auth.user, url_signer.verify())
+def get_new_game_url():
+
+    #create a new game_id, generate a random number, check if it already exists, if it does then generate a new number and check again,
+    # otherwise if current game id doesn't exist then create an entry in the Game table
+    game_id = random.randint(0,10000)
+
+    while check_if_game_id_exists(game_id):
+        game_id = random.randint(0,10000)
+    
+    #at this point we have a unique game_id that currently doesn't exist, go ahead and create an entry in the Game table
+    id = db.Games.insert(game_id = game_id, time_started = get_time_timestamp())
+
+    #redirect the user to the Play url appended with the game_id as the parameter
+    #redirect(URL('index'))
+
+    
+    return dict(game_id=game_id)
 
 @action('play')
 @action.uses('play.html', db, auth.user, url_signer)
 def play():
+    print("request params")
+    print(request.params.game_id)
+    
     return dict(
         my_callback_url = URL('my_callback', signer=url_signer),
         get_pixels_url  = URL('get_pixels', signer=url_signer),
@@ -125,5 +150,13 @@ def check_if_stats_exist(uid:int, last_click:int = 0):
         db.Ply_Stats.insert(user=uid, last_click=last_click)
     
     return
+
+
+def check_if_game_id_exists(game_id:int):
+    res = db(db.Games.game_id==game_id).select()
+    if len(res) == 0:
+        return False
+    else:    
+        return True
 
     

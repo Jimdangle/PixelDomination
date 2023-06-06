@@ -21,6 +21,7 @@ let init = (app) => {
     gridHeight: 20,
     selectedColor: "black",
     colorSelectorShown: false,
+    game_id: null,
   };
 
   app.enumerate = (a) => {
@@ -139,6 +140,21 @@ let init = (app) => {
     app.data.colorSelectorShown = !app.data.colorSelectorShown;
   };
 
+  app.start_new_game = function() {
+    axios({
+      method: "post",
+      url: get_new_game_url
+  })
+  .then( (r) => {
+      console.log(r.data)
+      console.log(r.data.pixels)
+      app.data.game_id = r.data.game_id;
+      // redirect to game URL
+      window.location.href = '../play?game_id=' + app.data.game_id;
+  })
+  .catch( (e) => {console.log(e)})
+  }
+
   app.get_pixels = function() {
     console.log("Getting pixels")
     axios({
@@ -162,6 +178,7 @@ let init = (app) => {
     stopDrawing: app.stopDrawing,
     get_pixels: app.get_pixels,
     toggleColorSelector: app.toggleColorSelector,
+    start_new_game: app.start_new_game,
   };
 
   // This creates the Vue instance.
@@ -169,6 +186,7 @@ let init = (app) => {
     el: "#vue-target",
     data: app.data,
     methods: app.methods,
+    /*
     mounted() {
       app.data.canvas = this.$refs.canvas;
       app.data.ctx = app.data.canvas.getContext("2d");
@@ -178,19 +196,21 @@ let init = (app) => {
       app.data.canvas.addEventListener("mouseup", app.stopDrawing);
       app.data.canvas.addEventListener("mousemove", app.draw);
     },
+    */
   });
 
   // And this initializes it.
   app.init = () => {
     // Put here any initialization code.
-    app.data.canvas = document.getElementById("canvas");
-    app.data.ctx = app.data.canvas.getContext("2d");
+    //app.data.canvas = document.getElementById("canvas");
+    //app.data.ctx = app.data.canvas.getContext("2d");
     
     // Set the canvas size
-    app.data.canvas.width = app.data.gridSize * app.data.gridWidth;
-    app.data.canvas.height = app.data.gridSize * app.data.gridHeight;
+    //app.data.canvas.width = app.data.gridSize * app.data.gridWidth;
+    //app.data.canvas.height = app.data.gridSize * app.data.gridHeight;
 
     //grab all the pixels already drawn from the database
+    /*
     axios({
       method: "get",
       url: get_pixels_url,
@@ -217,11 +237,12 @@ let init = (app) => {
             }
     })
     .catch( (e) => {console.log(e)})
-
+*/
   };
-
+  
   // Call to the initializer.
   app.init();
+
 };
 
 // This takes the (empty) app object, and initializes it,
