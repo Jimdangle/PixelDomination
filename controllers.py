@@ -132,7 +132,7 @@ def get_pixesl():
     # TODO change this to the size of the board
     pixels = [[None for i in range(100)] for j in range(100)]
     # fill in the pixels
-    for pixel in db(db.Board.pos_x != None).select():
+    for pixel in db(db.Board.game_id == request.params.get('game_id')).select():
         pixels[pixel.pos_x][pixel.pos_y] = pixel.color
         
     return dict(
