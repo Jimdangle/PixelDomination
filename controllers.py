@@ -28,6 +28,8 @@ Warning: Fixtures MUST be declared with @action.uses({fixtures}) else your app w
 from py4web import action, request, abort, redirect, URL
 from yatl.helpers import A
 from .common import db, session, T, cache, auth, logger, authenticated, unauthenticated, flash
+from py4web.utils.form import Form, FormStyleBulma
+from py4web.utils.grid import Grid, GridClassStyleBulma
 from py4web.utils.url_signer import URLSigner
 from .models import get_user_email, get_time_timestamp, get_user_id
 import random
@@ -49,26 +51,16 @@ def index():
         get_new_game_url = URL('get_new_game_url', signer=url_signer),
     )
 
-@action('get_new_game_url', method="POST")
-@action.uses(session, db, auth.user, url_signer.verify())
-def get_new_game_url():
 
-    #create a new game_id, generate a random number, check if it already exists, if it does then generate a new number and check again,
-    # otherwise if current game id doesn't exist then create an entry in the Game table
-    game_id = random.randint(0,10000)
+@action('create_game', method=["GET", "POST"])
+@action.uses('add.html', db, session, auth.user)
+def add():
+    form = Form(db.Games,
+                csrf_session=session, formstyle=FormStyleBulma)
+    if form.accepted:
+        redirect(URL('browser'))
+    return dict(form=form)
 
-    while check_if_game_id_exists(game_id):
-        game_id = random.randint(0,10000)
-    
-    #at this point we have a unique game_id that currently doesn't exist, go ahead and create an entry in the Game table
-    #keep in mind move_interval is in seconds
-    id = db.Games.insert(game_id = game_id, time_started = get_time_timestamp(), move_interval = 10)
-
-    #redirect the user to the Play url appended with the game_id as the parameter
-    #redirect(URL('index'))
-
-    
-    return dict(game_id=game_id)
 
 @action('play')
 @action.uses('play.html', db, auth.user, url_signer)
@@ -82,10 +74,33 @@ def play():
         draw_url        = URL('draw_url', signer=url_signer),
     )
 
-@action('browser')
-@action.uses('browser.html', db, auth)
-def browser():
-    return dict()
+
+
+class GridAddButton(object):
+    """This is the edit button for the grid."""
+    def __init__(self):
+        self.url = URL('create_game', signer=url_signer)
+        self.append_id = True # append the ID to the edit.
+        self.additional_classes = 'button'
+        self.icon = 'fa-plus'
+        self.text = 'Add'
+        self.message = 'Create a new game'
+        self.onclick = None # Used for things like confirmation.
+
+
+@action('browser', method=['POST', 'GET'])
+@action('browser/<path:path>', method=['POST', 'GET']) # /fixtures_example/index
+@action.uses('browser.html', db, auth.user)
+def browser(path=None):
+    grid = Grid(
+        path,
+        query = db.Games.id != None,
+        search_queries=None, search_form=None,
+        editable=False, deletable=False, details=False, create=False,
+        grid_class_style=GridClassStyleBulma,
+        formstyle=FormStyleBulma,
+    )
+    return dict(grid=grid)
 
 @action('leaderboard')
 @action.uses('leaderboard.html', db, auth)
@@ -110,9 +125,6 @@ def stats():
 @action.uses(session, db, auth.user, url_signer.verify())
 def draw_url():
     user = get_user_id()
-    
-
-
     click_time = int(request.params.get('click_time')) # not init so get this info here 
     x = int(request.params.get('y'))
     y = int(request.params.get('x'))
@@ -192,5 +204,7 @@ def check_if_game_id_exists(game_id:int):
         return False
     else:    
         return True
+
+
 
     
