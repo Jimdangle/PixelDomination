@@ -25,11 +25,18 @@ def get_time():
 def get_time_timestamp():
     return get_time().timestamp()
 
+def get_players_game():
+    res = db(db.Ply_Stats.user == get_user_id()).select()
+    if len(res) > 0:
+        return res[0]["last_game_id"]
+    
+    return None
+
 def gen_rand_name():
     random.seed(get_time_timestamp())
-    adj = random.randint(1,len(ADJS))
-    noun = random.randint(1,len(NOUNS))
-    n2   = random.randint(1,len(N2))
+    adj = random.randint(1,len(ADJS)-1)
+    noun = random.randint(1,len(NOUNS)-1)
+    n2   = random.randint(1,len(N2)-1)
     name = f'{ADJS[adj]} {NOUNS[noun]} {N2[n2]}'
     print(name)
     return name
@@ -77,6 +84,21 @@ db.define_table('UClick',
 
 db.commit()
 
+
+# Game clicks
+# gid : the id of the game the user clicked in
+# user: the id of the user who clicked
+# click_time: the time the user clicked
+# (gid, user) needs to be unique so that we only have one entry per game per user at a time hence why it is a primary key
+db.define_table('GClick',
+                Field('gid', 'references Games', required=True),
+                Field('user', 'references auth_user', required=True),
+                Field('click_time', 'integer', default=0),
+                primarykey=['gid', 'user'])
+
+db.commit()
+
+
 db.define_table('Ply_Stats',
                 Field('user', 'integer', required=True, unique=True),
                 Field('total_clicks', 'integer', default=0),
@@ -86,4 +108,7 @@ db.define_table('Ply_Stats',
 
 
 db.commit()
+
+
+
 
