@@ -31,7 +31,7 @@ db.define_table('Board',
                 Field('pos_x','integer',required=True),
                 Field('pos_y', 'integer', required=True),
                 Field('color', 'string', required=True,),
-                Field('game_id', 'integer', required=False,)
+                Field('game_id', 'integer', required=True,)
                 )
 
 db.commit()

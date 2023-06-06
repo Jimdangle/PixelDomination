@@ -74,7 +74,7 @@ def get_new_game_url():
 def play():
     print("request params")
     print(request.params.game_id)
-    
+
     return dict(
         my_callback_url = URL('my_callback', signer=url_signer),
         get_pixels_url  = URL('get_pixels', signer=url_signer),
@@ -114,12 +114,13 @@ def draw_url():
     x = int(request.params.get('y'))
     y = int(request.params.get('x'))
     color = request.params.get('color')
+    game_id = request.params.get('game_id')
 
     check_if_stats_exist(user,click_time) # this will place the user in the stats table with the given click time
     
-    print(f'Place pixel at {x},{y}, color {color}')
+    print(f'Place pixel at {x},{y}, color {color}, game_id {game_id}')
     db((db.Board.pos_x==x) & (db.Board.pos_y==y)).delete()
-    id = db.Board.insert(uid = user, pos_x = x, pos_y = y, color = color)
+    id = db.Board.insert(uid = user, pos_x = x, pos_y = y, color = color, game_id = game_id)
     db(db.Ply_Stats.user==user).update(total_clicks=db.Ply_Stats.total_clicks+1,last_click=click_time) #update clicks
     
     pixels = db(db.Board.color != None).select()
