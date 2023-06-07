@@ -111,5 +111,21 @@ db.define_table('Ply_Stats',
 db.commit()
 
 
+### SQL for player leeader board
+##  SELECT AU.email, COUNT(*)
+##  FROM auth_user AU, Board B
+##  WHERE AU.id = B.id
+##  
+##
+###
 
+def clean_tables():
+    SQL = ['DELETE FROM Games;', 'DELETE FROM Board;', 'DELETE FROM UClick;', 'DELETE FROM GClick;', 'DELETE FROM Ply_Stats;']
+    
+    for sql in SQL:
+        db.executesql(sql)
+        db.commit()
 
+# Uncomment to wipe tables
+# We should probably be doing this on every pull
+#clean_tables()

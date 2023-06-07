@@ -235,7 +235,6 @@ let init = (app) => {
     ) {
       console.log("x: " + gridX + " y: " + gridY + " color: " + app.data.selectedColor);
       //console.log(this.$route.query.game_id) // outputs 'yay'
-
       axios({
         method: "post",
         url: draw_url,
@@ -253,8 +252,6 @@ let init = (app) => {
             app.data.cells[gridY][gridX] = app.data.selectedColor;
             app.drawGrid();
           }
-          
-
         })
         .catch((e) => {
           console.log(e);
@@ -266,13 +263,17 @@ let init = (app) => {
     axios({
       method: "get",
       url: get_pixels_url,
-      params: {
-        game_id: app.data.game_id,
-      },
     })
       .then((r) => {
         console.log("Got pixels");
-        app.data.cells = r.data.pixels;
+        let boardDict = r.data.pixels;  
+        
+        for (let key in boardDict) {
+          let [x, y] = key.split(',').map(Number);
+          let color = boardDict[key];
+          app.data.cells[x][y] = color;
+        }
+
         app.drawGrid();
       })
       .catch((e) => {
