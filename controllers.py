@@ -68,6 +68,7 @@ def add():
 @action('play/<gid:int>')
 @action.uses('play.html', db, auth.user, url_signer)
 def play(gid=None):
+    print(gid)
     user = get_user_id()
     db(db.Ply_Stats.user==user).update(last_game_id=gid)
     print(f'{user}  playing game {gid}')
@@ -184,7 +185,7 @@ def draw_url():
         db(db.Ply_Stats.user==user).update(total_clicks=db.Ply_Stats.total_clicks+1,last_click=click_time,last_game_id=game_id) #update clicks
     
     print(pixels)
-    return dict(pixels=pixels)
+    return dict(pixels=pixels, can_move=can_draw)
 
 
 

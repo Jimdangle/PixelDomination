@@ -48,12 +48,22 @@ let init = (app) => {
     app.data.search_query = ""
   }
 
+  app.play = function(id) {
+    current = window.location
+    console.log(current)
+    console.log(id)
+
+    redir = current.origin + "/PixelDomination/play/"+id
+    window.location = redir
+  }
+
   // This contains all the methods.
   app.methods = {
     // Complete as you see fit.
     get_games: app.get_games,
     search_games: app.search_games,
-    clear_search: app.clear_search
+    clear_search: app.clear_search,
+    play: app.play
   };
 
   // This creates the Vue instance.
