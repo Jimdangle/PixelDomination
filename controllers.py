@@ -76,7 +76,9 @@ def play(gid=None):
         my_callback_url = URL('my_callback', signer=url_signer),
         get_pixels_url  = URL('get_pixels', signer=url_signer),
         draw_url        = URL('draw_url', signer=url_signer),
-        game_id=gid
+        game_id=gid,
+        get_chat_messages_url = URL('get_chat', signer=url_signer),
+        send_chat_message_url = URL('post_chat', signer=url_signer),
     )
 
 
@@ -230,5 +232,31 @@ def check_can_place(player:int, game:int, click_time:int):
     return False
 
 
+@action('get_chat')
+@action.uses(db, auth.user, url_signer.verify())
+def get_chat():
+    # game_id = request.params.get('game_id')
+    game_id = get_players_game()
 
-    
+    chat = db(db.Chat.gid == game_id).select().as_list()
+    # Limit to 20 messages
+    chat = chat[-20:]
+
+    for message in chat:
+        user = db(db.auth_user.id == message['user']).select().first()
+        message['user'] = user['first_name'] + " " + user['last_name']
+
+    return dict(chat=chat)
+
+@action('post_chat', method="POST")
+@action.uses(session, db, auth.user, url_signer.verify())
+def post_chat():
+    # game_id = request.params.get('game_id')
+    game_id = get_players_game()
+    user = get_user_id()
+    message = request.params.get('message')
+
+    print(game_id)
+
+    db.Chat.insert(gid=game_id, user=user, message=message)
+    return dict()
