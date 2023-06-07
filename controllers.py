@@ -102,8 +102,23 @@ def browser():
 @action.uses(db, auth.user)
 def get_games():
     print("attempt")
-    # get a list of games
-    games = db(db.Games.id != None).select().as_list()
+    try:
+        search = request.params.query
+    except:
+        search = None
+
+    if search is None:
+        search = ""
+    
+
+    if search.find("_") > -1:
+        search= search.replace("_", "$_")
+    #print(f'searching {search_q}')
+    games = db.executesql(f'SELECT id, name, x_size, y_size, move_interval, time_started, live_time FROM Games WHERE name LIKE "%{search}%" ESCAPE "$";', as_dict=True)
+    
+
+
+    #games = db(db.Games.id != None).select().as_list()
     # Iterate over them to fancy-ify them
     output_list = []
     for game in games:
@@ -181,9 +196,11 @@ def get_pixesl():
 
     game_info = db(db.Games.id==game).select()
     print(game_info)
-
-    game_info = game_info[0]
-
+    try:
+        game_info = game_info[0]
+    except:
+        return
+    
     
 
     pixels = [[None for i in range(game_info["x_size"])] for j in range(game_info["y_size"])]

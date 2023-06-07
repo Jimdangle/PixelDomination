@@ -17,8 +17,8 @@
             <div class="level-item">
               <div class="field">
                 <p class="control has-icons-right">
-                  <input class="input" type="text" placeholder="search for games" v-model="search_query" @keyup="">
-                  <span class="icon is-small is-right clickable" @click="">
+                  <input class="input" type="text" placeholder="search for games" v-model="search_query" @keyup="search_games">
+                  <span class="icon is-small is-right clickable" @click="clear_search">
                     <i class="fa fa-times-circle"></i>
                   </span>
                 </p>
@@ -62,7 +62,7 @@
                         </div>
                       </div>
                       <div class="level-item ">
-                        <a class="button is-success control" @click="">
+                        <a class="button is-success control" href={game.id}>
                           <span class="icon"><i class="fa fa-play"></i></span>
                           <span>Join Game</span>
                         </a>
