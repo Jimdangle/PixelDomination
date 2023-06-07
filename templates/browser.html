@@ -7,13 +7,85 @@
 
 <body>
   <div class="section" id="vue-target">
+    <div class="container">
+      <div class="section">
+
+        <h1 class="title">Server Browser</h1>
+
+        <div class="level">
+          <div class="level-left">
+            <div class="level-item">
+              <div class="field">
+                <p class="control has-icons-right">
+                  <input class="input" type="text" placeholder="search for games" v-model="search_query" @keyup="">
+                  <span class="icon is-small is-right clickable" @click="">
+                    <i class="fa fa-times-circle"></i>
+                  </span>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="level-right">
+            <div class="level-item">
+              <a class="button is-warning" href="[[=URL('create_game')]]">
+                <span class="icon"><i class="fa fa-plus"></i></span>
+                <span>New Game</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <hr>
+        
+
+        
+        <div class="tile is-ancestor">
+          <div class="tile is-vertical">
+            <div v-for="game in games">
+
+              <div class="tile is-parent " style="align-content: center">
+                <div class="tile is-child box notification is-info-light">
+                  <div class="level">
+                    <div class="level-left">
+                      <div class="level-item">
+                        <div class="block">
+                          <h1 class="title is-3 mb-5">{{ game.name }} ({{ game.id }})</h1>
+                          <h2 class="subtitle">({{ game.size }})</h2>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="level-right">
+                      <div class="level-item">
+                        <div class="block has-text-centered">
+                          <h1 class="title is-3 mb-5">{{ game.ttl }}</h1>
+                          <h2 class="subtitle has-text-right">({{ game.move_interval }} cooldown)</h2>
+                        </div>
+                      </div>
+                      <div class="level-item ">
+                        <a class="button is-success control" @click="">
+                          <span class="icon"><i class="fa fa-play"></i></span>
+                          <span>Join Game</span>
+                        </a>
+                      </div>
+                    </div>
+                           
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
   </div>
-  <a class="button is-success" href="[[=URL('create_game')]]">
-    <span class="icon"><i class="fa fa-plus"></i></span>
-    <span>Add</span>
-  </a>
-  <div class="section">
-    [[=grid.render()]]
-  </div>
-  
+
+  [[block page_scripts]]
+  <script>
+    let get_games_url = "[[=URL(get_games_url)]]";
+  </script>
+  <script src="js/browser.js"></script>
+  [[end]]
 </body>
+
