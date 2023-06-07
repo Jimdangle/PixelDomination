@@ -42,7 +42,7 @@ let init = (app) => {
     colorSelectorShown: false,
     leaderBoardExpanded: false,
     game_id: getUrlParameter('game_id'),
-    updateInterval: 10000,
+    updateInterval: 1000,
   };
 
   app.toggleLeaderBoard = () => {
