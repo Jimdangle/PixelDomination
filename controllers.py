@@ -56,7 +56,7 @@ def index():
 
 
 @action('create_game', method=["GET", "POST"])
-@action.uses('add.html', db, session, auth.user)
+@action.uses('create_game.html', db, session, auth.user)
 def add():
     form = Form(db.Games,
                 csrf_session=session, formstyle=FormStyleBulma)
