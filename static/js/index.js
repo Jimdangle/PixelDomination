@@ -21,6 +21,7 @@ let init = (app) => {
     gridHeight: 20,
     selectedColor: "black",
     colorSelectorShown: false,
+    game_id: null,
   };
 
   app.enumerate = (a) => {
@@ -115,13 +116,8 @@ let init = (app) => {
                 app.data.gridSize
               );
                 
+            app.get_pixels()
             }
-
-
-        
-            
-
-
     })
     .catch( (e) => {console.log(e)})
 
@@ -139,11 +135,29 @@ let init = (app) => {
     app.data.colorSelectorShown = !app.data.colorSelectorShown;
   };
 
+  app.start_new_game = function() {
+    axios({
+      method: "post",
+      url: get_new_game_url
+    })
+    .then( (r) => {
+      console.log(r.data)
+      console.log(r.data.pixels)
+      app.data.game_id = r.data.game_id;
+      // redirect to game URL
+      window.location.href = '../play?game_id=' + app.data.game_id;
+   })
+    .catch( (e) => {console.log(e)})
+  }
+
   app.get_pixels = function() {
-    console.log("Getting pixels")
+    console.log(`Getting pixels for : ${app.get_gameid()}`)
     axios({
         method: "get",
-        url: get_pixels_url
+        url: get_pixels_url,
+        params: {
+          game_id: app.get_gameid()
+        }
     })
     .then( (r) => {
         console.log(r.data)
@@ -151,6 +165,7 @@ let init = (app) => {
     })
     .catch( (e) => {console.log(e)})
   }
+
 
   // This contains all the methods.
   app.methods = {
@@ -162,6 +177,7 @@ let init = (app) => {
     stopDrawing: app.stopDrawing,
     get_pixels: app.get_pixels,
     toggleColorSelector: app.toggleColorSelector,
+    start_new_game: app.start_new_game,
   };
 
   // This creates the Vue instance.
@@ -169,6 +185,7 @@ let init = (app) => {
     el: "#vue-target",
     data: app.data,
     methods: app.methods,
+    /*
     mounted() {
       app.data.canvas = this.$refs.canvas;
       app.data.ctx = app.data.canvas.getContext("2d");
@@ -178,50 +195,17 @@ let init = (app) => {
       app.data.canvas.addEventListener("mouseup", app.stopDrawing);
       app.data.canvas.addEventListener("mousemove", app.draw);
     },
+    */
   });
 
   // And this initializes it.
   app.init = () => {
-    // Put here any initialization code.
-    app.data.canvas = document.getElementById("canvas");
-    app.data.ctx = app.data.canvas.getContext("2d");
-    
-    // Set the canvas size
-    app.data.canvas.width = app.data.gridSize * app.data.gridWidth;
-    app.data.canvas.height = app.data.gridSize * app.data.gridHeight;
-
-    //grab all the pixels already drawn from the database
-    axios({
-      method: "get",
-      url: get_pixels_url,
-      })
-    .then(function (r) {
-            console.debug(r.data) 
-
-            for (let p in r.data.pixels){
-              console.log (r.data.pixels[p]["pos_x"]);
-
-              x = parseInt(r.data.pixels[p]["pos_x"]);
-              y = parseInt(r.data.pixels[p]["pos_y"]);
-              console.log("x: " + x + " y: " + y);
-              color = r.data.pixels[p]["color"];
-
-              app.data.ctx.fillStyle = color;
-              app.data.ctx.fillRect(
-                y * app.data.gridSize,
-                x * app.data.gridSize,
-                app.data.gridSize,
-                app.data.gridSize
-              );
-                
-            }
-    })
-    .catch( (e) => {console.log(e)})
-
+    app.get_pixels()
   };
-
+  
   // Call to the initializer.
   app.init();
+
 };
 
 // This takes the (empty) app object, and initializes it,

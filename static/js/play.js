@@ -1,5 +1,22 @@
 let app = {};
 
+
+var getUrlParameter = function getUrlParameter(sParam) {
+  var sPageURL = window.location.search.substring(1),
+      sURLVariables = sPageURL.split('&'),
+      sParameterName,
+      i;
+
+  for (i = 0; i < sURLVariables.length; i++) {
+      sParameterName = sURLVariables[i].split('=');
+
+      if (sParameterName[0] === sParam) {
+          return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+      }
+  }
+  return false;
+};
+
 let init = (app) => {
   app.data = {
     last_draw: 0,
@@ -24,7 +41,8 @@ let init = (app) => {
     isDragging: false,
     colorSelectorShown: false,
     leaderBoardExpanded: false,
-    updateInterval: 10000,
+    game_id: getUrlParameter('game_id'),
+    updateInterval: 1000,
   };
 
   app.toggleLeaderBoard = () => {
@@ -216,6 +234,8 @@ let init = (app) => {
       gridY < app.data.totalRows
     ) {
       console.log("x: " + gridX + " y: " + gridY + " color: " + app.data.selectedColor);
+      //console.log(this.$route.query.game_id) // outputs 'yay'
+
       axios({
         method: "post",
         url: draw_url,
@@ -228,7 +248,12 @@ let init = (app) => {
       })
         .then((r) => {
           app.data.cells[gridY][gridX] = app.data.selectedColor;
-          app.drawGrid();
+          //console.log("can move: " + r.data.can_move);
+          if (r.data.can_move){
+            app.drawGrid();
+          }
+          
+
         })
         .catch((e) => {
           console.log(e);
@@ -240,6 +265,9 @@ let init = (app) => {
     axios({
       method: "get",
       url: get_pixels_url,
+      params: {
+        game_id: app.data.game_id,
+      },
     })
       .then((r) => {
         console.log("Got pixels");
