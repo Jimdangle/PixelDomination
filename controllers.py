@@ -162,7 +162,6 @@ def draw_url():
 @action('get_pixels')
 @action.uses(db, auth.user, url_signer.verify())
 def get_pixesl():
-    # TODO change this to the size of the board
     game = get_players_game()
 
     game_info = db(db.Games.id==game).select()
@@ -170,16 +169,10 @@ def get_pixesl():
 
     game_info = game_info[0]
 
-    
 
-    pixels = [[None for i in range(game_info["x_size"])] for j in range(game_info["y_size"])]
-    # fill in the pixels
-    for pixel in db(db.Board.game_id == game).select():
-        pixels[pixel.pos_x][pixel.pos_y] = pixel.color
-        
-    return dict(
-        pixels = pixels,
-    )
+    game_data = db(db.Board.pos_x != None).select().as_list()
+    board = {f"{item['pos_x']},{item['pos_y']}": item['color'] for item in game_data}
+    return dict(pixels = board)
 
 
 
