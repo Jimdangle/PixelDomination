@@ -33,7 +33,7 @@ from py4web.utils.grid import Grid, GridClassStyleBulma
 from py4web.utils.url_signer import URLSigner
 from .models import get_user_email, get_time_timestamp, get_user_id, get_players_game
 import random
-import datetime
+from datetime import datetime, timedelta
 
 from time import gmtime, strftime
 
@@ -68,6 +68,7 @@ def add():
 @action('play/<gid:int>')
 @action.uses('play.html', db, auth.user, url_signer)
 def play(gid=None):
+    print(gid)
     user = get_user_id()
     db(db.Ply_Stats.user==user).update(last_game_id=gid)
     print(f'{user}  playing game {gid}')
@@ -94,19 +95,49 @@ class GridPlayButton(object):
 
 
 @action('browser', method=['POST', 'GET'])
-@action('browser/<path:path>', method=['POST', 'GET']) # /fixtures_example/index
 @action.uses('browser.html', db, auth.user)
-def browser(path=None):
-    grid = Grid(
-        path,
-        query = db.Games.id != None,
-        search_queries=None, search_form=None,
-        editable=False, deletable=False, details=False, create=False,
-        grid_class_style=GridClassStyleBulma,
-        formstyle=FormStyleBulma,
-        post_action_buttons=[GridPlayButton()]
-    )
-    return dict(grid=grid)
+def browser():
+    return dict(get_games_url="get_games")
+
+@action('get_games', method=['GET'])
+@action.uses(db, auth.user)
+def get_games():
+    print("attempt")
+    try:
+        search = request.params.query
+    except:
+        search = None
+
+    if search is None:
+        search = ""
+    
+
+    if search.find("_") > -1:
+        search= search.replace("_", "$_")
+    #print(f'searching {search_q}')
+    games = db.executesql(f'SELECT id, name, x_size, y_size, move_interval, time_started, live_time FROM Games WHERE name LIKE "%{search}%" ESCAPE "$";', as_dict=True)
+    
+
+
+    #games = db(db.Games.id != None).select().as_list()
+    # Iterate over them to fancy-ify them
+    output_list = []
+    for game in games:
+        # Calculate when the game will end (ttl is end time)
+        time = datetime.fromtimestamp(game['time_started'])
+        ttl = time + timedelta(hours=game['live_time'])
+        time_left = ttl - datetime.utcnow()
+        # Create entry for the results list
+        temp = {
+            'name': game['name'],
+            'size': str(game['x_size']) + " by " + str(game['y_size']),
+            'move_interval': str(game['move_interval']) + "s",
+            'ttl': str(time_left).split('.')[0],
+            'id': game['id'],
+        }
+        # Add the current entry to results list
+        output_list.append(temp)
+    return dict(results=output_list[:20])
 
 @action('leaderboard')
 @action.uses('leaderboard.html', db, auth)
@@ -166,9 +197,11 @@ def get_pixesl():
 
     game_info = db(db.Games.id==game).select()
     print(game_info)
-
-    game_info = game_info[0]
-
+    try:
+        game_info = game_info[0]
+    except:
+        return
+    
 
     game_data = db(db.Board.pos_x != None).select().as_list()
     board = {f"{item['pos_x']},{item['pos_y']}": item['color'] for item in game_data}

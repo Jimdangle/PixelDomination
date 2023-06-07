@@ -6,7 +6,7 @@ ADJS = ["dead","hairless","sadistic","metal","wild","domesticated","abnormal","m
 
 NOUNS = ['blood', 'idiot', 'toaster', 'legend', 'death', 'therapy', 'psychic', 'knife', 'sandwich', 'hunting', 'lettuce', 'kitty', 'french', 'antidepressant', 'corn', 'president', 'candlestick', 'coffee', 'brethren', 'nation', 'tank', 'Germany', 'sound barrier', 'private investor', 'main people', 'stock car', 'elastic band', 'whole blood', 'telephone', 'mad cow disease']
 
-N2 = ['rage', ' wish', 'ground' ,'chef', 'drug', 'cake', 'maker', 'pot', 'brakes']
+N2 = ['rage', 'wish', 'ground' ,'chef', 'drug', 'cake', 'maker', 'pot', 'brakes']
 
 import datetime
 from .common import db, Field, auth
@@ -33,6 +33,7 @@ def get_players_game():
     return None
 
 def gen_rand_name():
+    print("Hello wolf")
     random.seed(get_time_timestamp())
     adj = random.randint(1,len(ADJS)-1)
     noun = random.randint(1,len(NOUNS)-1)
@@ -50,7 +51,7 @@ def gen_rand_name():
 
 
 db.define_table('Games',
-                Field('name', 'string', default=gen_rand_name()),
+                Field('name', 'string', default=gen_rand_name),
                 Field('x_size', 'integer', required=True, requires=IS_INT_IN_RANGE(20,200,error_message='pick between 20,200')),
                 Field('y_size', 'integer', required=True, requires=IS_INT_IN_RANGE(20,200,error_message='pick between 20,200')),
                 Field('time_started','integer',required=True, default=get_time_timestamp()),
