@@ -143,10 +143,7 @@ def draw_url():
 
     can_draw = check_can_place(user,game_id,click_time)
 
-    if not can_draw:
-        #can't move yet
-        return dict(pixels=pixels)
-    else:
+    if can_draw:
         #can move, then insert the pixel
         check_if_stats_exist(user,click_time) # this will place the user in the stats table with the given click time
     
@@ -155,7 +152,11 @@ def draw_url():
         db((db.Board.pos_x==x) & (db.Board.pos_y==y)).delete()
         id = db.Board.insert(uid = user, pos_x = x, pos_y = y, color = color, game_id = game_id)
         db(db.Ply_Stats.user==user).update(total_clicks=db.Ply_Stats.total_clicks+1,last_click=click_time,last_game_id=game_id) #update clicks
+    
+    print(pixels)
     return dict(pixels=pixels)
+
+
 
 @action('get_pixels')
 @action.uses(db, auth.user, url_signer.verify())
