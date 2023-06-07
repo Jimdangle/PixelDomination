@@ -109,6 +109,15 @@ db.define_table('Ply_Stats',
 
 db.commit()
 
+db.define_table('Chat',
+                Field('user', 'integer', required=True),
+                Field('message', 'string', required=True),
+                Field('time', 'datetime', default=get_time),
+                Field('gid', 'references Games', required=True)
+                )
+
+db.commit()
+
 
 ### SQL for player leeader board
 ##  SELECT AU.email, COUNT(*)

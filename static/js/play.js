@@ -42,7 +42,10 @@ let init = (app) => {
     colorSelectorShown: false,
     leaderBoardExpanded: false,
     game_id: getUrlParameter('game_id'),
-    updateInterval: 1000,
+    updateInterval: 10000,
+    chatOpen: false,
+    chatMessages: [],
+    chatMessage: "",
   };
 
   app.toggleLeaderBoard = () => {
@@ -51,6 +54,38 @@ let init = (app) => {
 
   app.toggleColorSelector = () => {
     app.data.colorSelectorShown = !app.data.colorSelectorShown;
+  };
+
+  app.get_chat_messages = () => {
+    axios
+      .get(get_chat_messages_url, { params: { game_id: app.data.game_id } })
+      .then((response) => {
+        console.log(response)
+        app.data.chatMessages = response.data.chat;
+        app.data.chatMessages.forEach((msg) => {
+          // convert unix timestamp to time
+          msg.time = Sugar.Date(msg.time + "Z").format("{hh}:{mm}");
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
+  app.send_chat_message = () => {
+    if (app.data.chatMessage.length == 0) return;
+    axios
+      .post(send_chat_message_url, {
+        game_id: app.data.game_id,
+        message: app.data.chatMessage,
+      })
+      .then((response) => {
+        app.data.chatMessage = "";
+        app.get_chat_messages();
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   };
 
   app.selectColor = function (color) {
@@ -284,6 +319,12 @@ let init = (app) => {
       });
   };
 
+  app.update = () => {
+    app.get_pixels();
+    app.get_chat_messages();
+    // app.get_leaderboard();
+  };
+
   app.methods = {
     drawGrid: app.drawGrid,
     mousedown: app.mousedown,
@@ -295,6 +336,9 @@ let init = (app) => {
     get_pixels: app.get_pixels,
     selectColor: app.selectColor,
     toggleLeaderBoard: app.toggleLeaderBoard,
+    get_chat_messages: app.get_chat_messages,
+    send_chat_message: app.send_chat_message,
+    update: app.update,
   };
 
   app.vue = new Vue({
@@ -328,9 +372,11 @@ let init = (app) => {
       }
     }
 
-    app.get_pixels();
+    // app.get_pixels();
+    // app.get_chat_messages();
+    app.update();
     // TODO - fix race condition where pixel is posted before the get_pixels request is finished
-    setInterval(app.get_pixels, app.data.updateInterval); // Get Pixels every 10 seconds
+    setInterval(app.update, app.data.updateInterval); // Get Pixels every 10 seconds
 
     // Add the event listeners
     app.data.canvas.addEventListener("mousedown", app.mousedown.bind(this));
