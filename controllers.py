@@ -151,6 +151,7 @@ def draw_url():
     
         db((db.Board.pos_x==x) & (db.Board.pos_y==y)).delete()
         id = db.Board.insert(uid = user, pos_x = x, pos_y = y, color = color, game_id = game_id)
+        print(id)
         db(db.Ply_Stats.user==user).update(total_clicks=db.Ply_Stats.total_clicks+1,last_click=click_time,last_game_id=game_id) #update clicks
     
     print(pixels)
