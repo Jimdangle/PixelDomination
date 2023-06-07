@@ -202,8 +202,9 @@ def get_pixesl():
     except:
         return
     
+    print(game)
 
-    game_data = db(db.Board.pos_x != None).select().as_list()
+    game_data = db(db.Board.game_id==game).select().as_list()
     board = {f"{item['pos_x']},{item['pos_y']}": item['color'] for item in game_data}
     return dict(pixels = board)
 
