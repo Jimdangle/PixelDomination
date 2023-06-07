@@ -24,19 +24,36 @@ let init = (app) => {
   app.get_games = function () {
     // Get the games from py4web
     axios({
-        method: "get",
-        url: get_games_url,
-        //params: {query: app.vue.search_query},
+      method: "get",
+      url: get_games_url,
+      //params: {query: app.vue.search_query},
     }).then((r) => {
-        app.data.games = r.data.results;
-        console.log(app.data.games);
-    }).catch( (e) => {console.log(e)} );
+      app.data.games = r.data.results;
+      console.log(app.data.games);
+    }).catch((e) => { console.log(e) });
+  }
+
+  app.search_games = function () {
+    axios({
+      method: "get",
+      url: get_games_url,
+      params: {query: app.vue.search_query},
+    }).then((r) => {
+      app.data.games = r.data.results;
+      console.log(app.data.games);
+    }).catch((e) => { console.log(e) });
+  }
+
+  app.clear_search = function() {
+    app.data.search_query = ""
   }
 
   // This contains all the methods.
   app.methods = {
     // Complete as you see fit.
     get_games: app.get_games,
+    search_games: app.search_games,
+    clear_search: app.clear_search
   };
 
   // This creates the Vue instance.
@@ -61,7 +78,7 @@ let init = (app) => {
   app.init = () => {
     app.get_games();
   };
-  
+
   // Call to the initializer.
   app.init();
 
