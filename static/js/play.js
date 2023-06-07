@@ -235,7 +235,6 @@ let init = (app) => {
     ) {
       console.log("x: " + gridX + " y: " + gridY + " color: " + app.data.selectedColor);
       //console.log(this.$route.query.game_id) // outputs 'yay'
-
       axios({
         method: "post",
         url: draw_url,
@@ -247,13 +246,12 @@ let init = (app) => {
         },
       })
         .then((r) => {
-          app.data.cells[gridY][gridX] = app.data.selectedColor;
-          //console.log("can move: " + r.data.can_move);
+          //app.data.cells[gridY][gridX] = app.data.selectedColor;
+          console.log("can move: " + r.data.can_move);
           if (r.data.can_move){
+            app.data.cells[gridY][gridX] = app.data.selectedColor;
             app.drawGrid();
           }
-          
-
         })
         .catch((e) => {
           console.log(e);
