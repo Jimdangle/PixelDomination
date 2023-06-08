@@ -1,4 +1,3 @@
-
 [[extend 'layout-noFooter.html']]
 
 <head>
@@ -6,21 +5,147 @@
 </head>
 
 <body>
-  <div class="section" id="vue-target">
-    <h1 class="title is-1"> [[=ply.email]] Stats</h1>
-    <div class="columns">
-      <div class="column">
-        <h3 class="subtitle is-3"> Total Clicks </h3>
-        <h3 class="subtitle is-3"> Last Click </h3>
-        <h3 class="subtitle is-3"> Last Game </h3>
+  <div class="container">
+    <div class="section">
+      <h1 class="title is-2">Player Stats</h1>
+    </div>
+    <div class="tile is-ancestor is-vertical">
+      <div class="tile is-parent">
+        <div class="tile is-child notification is-primary">
+          <div class="level">
+            <div class="level-item">
+              <h1 class="title is-3">General Stats</h1>
+            </div>
+          </div>
+          <div class="level">
+            <div class="level-left">
+              <div class="level-item">
+                <h3 class="subtitle is-3"> Total Clicks </h3>
+              </div>
+            </div>
+            <div class="level-right">
+              <div class="level-item">
+                <h3 class="subtitle is-3"> [[=ply.total_clicks]] </h3>
+              </div>
+            </div>
+          </div>
+          <hr>
+          <div class="level">
+            <div class="level-left">
+              <div class="level-item">
+                <h3 class="subtitle is-3"> Last Click </h3>
+              </div>
+            </div>
+            <div class="level-right">
+              <div class="level-item">
+                <h3 class="subtitle is-3"> [[=ply.last_click]] </h3>
+              </div>
+            </div>
+          </div>
+          <hr>
+          <div class="level">
+            <div class="level-left">
+              <div class="level-item">
+                <h3 class="subtitle is-3"> Last Game </h3>
+              </div>
+            </div>
+            <div class="level-right">
+              <div class="level-item">
+                <h3 class="subtitle is-3"> [[=ply.game_name]] </h3>
+              </div>
+            </div>
+          </div>
+          <hr>
+          <div class="level">
+            <div class="level-left">
+              <div class="level-item">
+                <h3 class="subtitle is-3"> Active Pixels </h3>
+              </div>
+            </div>
+            <div class="level-right">
+              <div class="level-item">
+                <h3 class="subtitle is-3"> [[=ply.pixels]] </h3>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="column">
-        <h3 class="subtitle is-3"> [[=ply.total_clicks]] </h3>
-        <h3 class="subtitle is-3"> [[=ply.last_click]] </h3>
-        <h3 class="subtitle is-3"> [[=ply.last_game_id]] </h3>
+      <div class="tile is-parent">
+        <div class="tile is-child notification is-info">
+          <div class="level">
+            <div class="level-item">
+              <h1 class="title is-3">Pixel Stats</h1>
+            </div>
+          </div>
+          <div class="level">
+            <div class="level-left">
+              <div class="level-item">
+                <h3 class="subtitle is-3"> Red </h3>
+              </div>
+            </div>
+            <div class="level-right">
+              <div class="level-item">
+                <h3 class="subtitle is-3"> [[=ply.red]] </h3>
+              </div>
+            </div>
+          </div>
+          <hr>
+          <div class="level">
+            <div class="level-left">
+              <div class="level-item">
+                <h3 class="subtitle is-3"> Blue </h3>
+              </div>
+            </div>
+            <div class="level-right">
+              <div class="level-item">
+                <h3 class="subtitle is-3"> [[=ply.blue]] </h3>
+              </div>
+            </div>
+          </div>
+          <hr>
+          <div class="level">
+            <div class="level-left">
+              <div class="level-item">
+                <h3 class="subtitle is-3"> Green </h3>
+              </div>
+            </div>
+            <div class="level-right">
+              <div class="level-item">
+                <h3 class="subtitle is-3"> [[=ply.green]] </h3>
+              </div>
+            </div>
+          </div>
+          <hr>
+          <div class="level">
+            <div class="level-left">
+              <div class="level-item">
+                <h3 class="subtitle is-3"> Yellow </h3>
+              </div>
+            </div>
+            <div class="level-right">
+              <div class="level-item">
+                <h3 class="subtitle is-3"> [[=ply.yellow]] </h3>
+              </div>
+            </div>
+          </div>
+          <hr>
+          <div class="level">
+            <div class="level-left">
+              <div class="level-item">
+                <h3 class="subtitle is-3"> Black </h3>
+              </div>
+            </div>
+            <div class="level-right">
+              <div class="level-item">
+                <h3 class="subtitle is-3"> [[=ply.black]] </h3>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-    
   </div>
-  
+
+  </div>
+
 </body>
