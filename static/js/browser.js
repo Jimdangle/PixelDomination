@@ -40,12 +40,14 @@ let init = (app) => {
       params: {query: app.vue.search_query},
     }).then((r) => {
       app.data.games = r.data.results;
-      console.log(app.data.games);
     }).catch((e) => { console.log(e) });
   }
 
   app.clear_search = function() {
-    app.data.search_query = ""
+    // Clear the search query
+    app.vue.search_query = "";
+    // get the games list again
+    app.get_games();
   }
 
   app.play = function(id) {
