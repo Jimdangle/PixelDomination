@@ -53,6 +53,7 @@ def index():
         draw_url         = URL('draw_url', signer=url_signer),
         get_new_game_url = URL('get_new_game_url', signer=url_signer),
         game_grid_url = URL('game_grid_url', signer=url_signer),
+        count_score_url  = URL('count_score', signer=url_signer),
     )
 
 
@@ -94,6 +95,7 @@ def play(gid=None):
         get_chat_messages_url = URL('get_chat', signer=url_signer),
         send_chat_message_url = URL('post_chat', signer=url_signer),
         game_grid_url = URL('game_grid_url', signer=url_signer),
+        count_score_url  = URL('count_score', signer=url_signer),
     )
 
 
@@ -232,7 +234,18 @@ def get_pixesl():
     board = {f"{item['pos_x']},{item['pos_y']}": item['color'] for item in game_data}
     return dict(pixels = board)
 
-
+@action('count_score')
+@action.uses(db, auth.user, url_signer.verify())
+def count_score():
+    game = get_players_game() #gets the current user's last played game id
+    #Count number of pixels of each color in that game id 
+    black = db((db.Board.game_id == game) & (db.Board.color == 'black')).count()
+    red = db((db.Board.game_id == game) & (db.Board.color == 'red')).count()
+    green = db((db.Board.game_id == game) & (db.Board.color == 'green')).count()
+    blue = db((db.Board.game_id == game) & (db.Board.color == 'blue')).count()
+    yellow = db((db.Board.game_id == game) & (db.Board.color == 'yellow')).count()
+    
+    return dict(black=black, red=red, green=green, blue=blue, yellow=yellow)
 
 
 
