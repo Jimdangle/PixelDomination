@@ -61,27 +61,34 @@
       </div>
       <div class="chat" style="position: absolute; bottom: 0; right: 0">
         <div v-show="!chatOpen" class="circle" @click="chatOpen=true">
-          <i class="fa fa-comment" style="color: white;"></i>
+          <i class="fa fa-comment" style="color: white"></i>
         </div>
         <div v-show="chatOpen" class="chat-box">
           <div class="chat-title">
             <h2>Game Chat</h2>
-            <span class="minimize-arrow"
-            @click="chatOpen = false">▼</span>
+            <span class="minimize-arrow" @click="chatOpen = false">▼</span>
           </div>
           <div class="messages-container">
             <ul class="messages">
-              <li class="message-item" v-for="message in chatMessages" :key="message.id">
-                <span class="timestamp"> {{ message.time }} </span><span class="username">{{message.user}}:</span> {{ message.message }}
+              <li
+                class="message-item"
+                v-for="message in chatMessages"
+                :key="message.id"
+              >
+                <span class="username">{{message.user}}:</span> {{
+                message.message }}
               </li>
             </ul>
           </div>
           <div class="input-container">
-            <input type="text" placeholder="Type your message..." v-model="chatMessage" v-on:keyup.enter="send_chat_message">
+            <input
+              type="text"
+              placeholder="Type your message..."
+              v-model="chatMessage"
+              v-on:keyup.enter="send_chat_message"
+            />
           </div>
         </div>
-
-
       </div>
     </div>
   </div>
