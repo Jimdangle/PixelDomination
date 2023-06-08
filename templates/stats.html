@@ -8,8 +8,9 @@
 
 <body>
   <div class="container">
+  <div class="box">
     <div class="section">
-      <h1 class="title is-2">Player Stats</h1>
+      <h1 class="title is-2">[[=ply.username]]'s stats</h1>
     </div>
     <div class="tile is-ancestor is-vertical">
       <div class="tile is-parent">
@@ -147,10 +148,18 @@
       </div>
       <div class="tile is-parent">
         <div class="tile is-child notification is-info-light">
-          <canvas id="myChart" style="width:100%;max-width:700px"></canvas>
+          <div class="level">
+            <div class="level-item"><h3 class="title is-2">Pixel Chart</h3></div>
+          </div>
+          <div class="level">
+            <div class="level-item">
+              <canvas id="myChart" style="width:100%;max-width:700px"></canvas>
+            </div>
+          </div>
         </div>
       </div>
     </div>
+  </div>
   </div>
 
   <div class="container">
