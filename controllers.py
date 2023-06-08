@@ -73,11 +73,23 @@ def play(gid=None):
     db(db.Ply_Stats.user==user).update(last_game_id=gid)
     print(f'{user}  playing game {gid}')
 
+    game_info = db(db.Games.id==gid).select()
+
+    try:
+        game = game_info[0]
+        time = ttl(game['time_started'], game['live_time'])
+        game_data = {'name': game['name'], 'ttl': str(time).split('.')[0] }
+    
+    except:
+        game_data = {'name': 'None', 'ttl': 'None'}
+
+
     return dict(
         my_callback_url = URL('my_callback', signer=url_signer),
         get_pixels_url  = URL('get_pixels', signer=url_signer),
         draw_url        = URL('draw_url', signer=url_signer),
         game_id=gid,
+        game_data=game_data,
         get_chat_messages_url = URL('get_chat', signer=url_signer),
         send_chat_message_url = URL('post_chat', signer=url_signer),
     )
@@ -126,9 +138,7 @@ def get_games():
     output_list = []
     for game in games:
         # Calculate when the game will end (ttl is end time)
-        time = datetime.fromtimestamp(game['time_started'])
-        ttl = time + timedelta(hours=game['live_time'])
-        time_left = ttl - datetime.utcnow()
+        time_left = ttl(game["time_started"], game['live_time'])
         # Create entry for the results list
         temp = {
             'name': game['name'],
@@ -264,6 +274,17 @@ def check_can_place(player:int, game:int, click_time:int):
         return True
     
     return False
+
+# take in a starting timestamp
+# and a number of hours to be alive 
+# calulate how much time is left based on current time 
+def ttl(timestamp_start:int, hours_to_live:int):
+    time = datetime.fromtimestamp(timestamp_start)
+    ttl_out = time + timedelta(hours=hours_to_live)
+    time_left = ttl_out - datetime.utcnow()
+
+    return time_left
+    
 
 
 @action('get_chat')
