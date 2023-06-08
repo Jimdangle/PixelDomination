@@ -39,6 +39,7 @@ from time import gmtime, strftime
 
 url_signer = URLSigner(session)
 
+
 @action('index')
 @action.uses('index.html', db, auth.user, url_signer)
 def index():
@@ -72,6 +73,7 @@ def add():
 def play(gid=None):
     print(gid)
     user = get_user_id()
+    check_if_stats_exist(user)
     db(db.Ply_Stats.user==user).update(last_game_id=gid)
     print(f'{user}  playing game {gid}')
 
@@ -188,7 +190,7 @@ def draw_url():
 
     pixels = db(db.Board.game_id == game_id).select()
 
-    can_draw = check_can_place(user,game_id,click_time)
+    can_draw = check_update_gclicks(game_id,user,click_time)
 
     if can_draw:
         #can move, then insert the pixel
@@ -311,6 +313,49 @@ def ttl(timestamp_start:int, hours_to_live:int):
     return time_left
     
 
+# check and update gclicks 
+# take in a click time
+# check the current users current game 
+# see if a row in the GClick table exists for the game and player
+# if it doesn't exist: insert a new row containing gameid,playerid,last_click and return TRUE
+# if it does exist:
+#   check if (current click time - last click time ) > game move interval
+#     if true we update the Gclick table to contain the new time and return TRUE
+#
+# return FALSE
+def check_update_gclicks(cur_game:int, cur_user:int,click_time:int):
+
+    #check if row exists in gclicks table already
+    query = (db.GClick.gid==cur_game) & (db.GClick.user==cur_user)
+    gclicks = db(query).select()
+
+
+    if len(gclicks) <= 0: #nothing present
+        db.GClick.insert(gid=cur_game,user=cur_user,click_time=click_time)
+        return True # this user has not clicked in this game so they can click
+    else: # row found with gid and user id
+        game_info = db(db.Games.id==cur_game).select()
+        game = game_info[0]
+
+        last_click = gclicks[0]['click_time'] # last click of this player
+        interval = game['move_interval']
+
+        if (click_time-last_click) > interval: # player can click in this game
+            db(query).update(click_time=click_time) #update the row in the table
+            return True
+    
+    return False #Player has a row that they have not waited for 
+
+
+
+
+
+    
+
+
+
+
+
 
 @action('get_chat')
 @action.uses(db, auth.user, url_signer.verify())
@@ -340,3 +385,4 @@ def post_chat():
 
     db.Chat.insert(gid=game_id, user=user, message=message)
     return dict()
+
