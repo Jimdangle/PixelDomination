@@ -27,6 +27,7 @@ def get_time_timestamp():
 
 def get_players_game():
     res = db(db.Ply_Stats.user == get_user_id()).select()
+    print(res)
     if len(res) > 0:
         return res[0]["last_game_id"]
     
