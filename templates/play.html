@@ -16,9 +16,26 @@
 </head>
 
 <body>
-  <div class="container">
-    <h1 class="title is-2">[[=game_data['name'] ]]</h1>
-    <h1 class="subtitle is-4">[[=game_data['ttl'] ]]</h1>
+  <div class="container box notification is-info-light mb-4 mt-4">
+    <div class="level">
+      <div class="level-left">
+        <div class="level-item">
+          <a class="button is-danger control" href="[[=URL('browser')]]">
+            <span class="icon"><i class="fa fa-reply"></i></span>
+            <span>Back</span>
+          </a>
+        </div>
+        <div class="level-item"></div>
+        <div class="level-item">
+          <h1 class="title is-2">[[=game_data['name'] ]]</h1>
+        </div>
+      </div>
+      <div class="level-right">
+        <div class="level-item">
+          <h1 class="subtitle is-4">[[=game_data['ttl'] ]]</h1>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div
