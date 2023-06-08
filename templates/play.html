@@ -58,10 +58,12 @@
           Leaderboard
         </h2>
         <div class="leaderboard-items" v-show="leaderBoardExpanded">
-          <div class="leaderboard-item">Player 1</div>
-          <div class="leaderboard-item">Player 2</div>
-          <div class="leaderboard-item">Player 3</div>
           <!-- Add more leaderboard items here -->
+          <div v-for="obj in add_scores">
+            {{obj.name}} : {{obj.count}}
+          </div>
+
+        </div>
         </div>
       </div>
       <div class="chat" style="position: absolute; bottom: 0; right: 0">
@@ -108,6 +110,8 @@
     let get_chat_messages_url = "[[=XML(get_chat_messages_url)]]";
     let send_chat_message_url = "[[=XML(send_chat_message_url)]]";
     let game_grid_url = "[[=game_grid_url]]";
+    let count_score_url = "[[=XML(count_score_url)]]";
+
   </script>
   <script src="js/play.js"></script>
   [[end]]

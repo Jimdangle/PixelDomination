@@ -51,6 +51,7 @@ let init = (app) => {
     chatMessages: [],
     chatMessage: "",
     updateInterval: 5000,
+    add_scores: [],
   };
 
   app.toggleLeaderBoard = () => {
@@ -317,6 +318,28 @@ let init = (app) => {
       });
   };
 
+  app.count_score = function() {
+    axios({
+      method: "get",
+      url: count_score_url,
+    })
+      .then((r) => {
+        console.log("Got score");
+        app.data.add_scores = [
+        {name: "Black", count: r.data.black}, 
+        {name: "Red", count: r.data.red}, 
+        {name: "Green", count: r.data.green},
+        {name: "Blue", count: r.data.blue},
+        {name: "Yellow", count: r.data.yellow}]; 
+        app.data.add_scores.sort((a, b) => b.count - a.count);
+      })
+      .catch((e) => {
+        console.log("Failed to get score");
+        console.log(e);
+      });
+  };
+
+
   app.update = () => {
     app.get_pixels();
     app.get_chat_messages();
@@ -337,6 +360,7 @@ let init = (app) => {
     get_chat_messages: app.get_chat_messages,
     send_chat_message: app.send_chat_message,
     update: app.update,
+    count_score: app.count_score,
   };
 
   app.vue = new Vue({
@@ -394,8 +418,10 @@ let init = (app) => {
     // app.get_pixels();
     // app.get_chat_messages();
     app.update();
+    app.count_score();
     // TODO - fix race condition where pixel is posted before the get_pixels request is finished
     setInterval(app.update, app.data.updateInterval); // Get Pixels every 10 seconds
+    setInterval(app.count_score, app.data.updateInterval);
 
     // Add the event listeners
     app.data.canvas.addEventListener("mousedown", app.mousedown.bind(this));
