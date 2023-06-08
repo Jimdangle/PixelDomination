@@ -301,7 +301,7 @@ let init = (app) => {
       .then((r) => {
         console.log("Got pixels");
         let boardDict = r.data.pixels;  
-        console.log(r.data.pixels)
+        // console.log(r.data.pixels)
         for (let key in boardDict) {
           let [x, y] = key.split(',').map(Number);
           let color = boardDict[key];
