@@ -31,7 +31,7 @@ from .common import db, session, T, cache, auth, logger, authenticated, unauthen
 from py4web.utils.form import Form, FormStyleBulma
 from py4web.utils.grid import Grid, GridClassStyleBulma
 from py4web.utils.url_signer import URLSigner
-from .models import get_user_email, get_time_timestamp, get_user_id, get_players_game, get_game_name, get_player_pixels
+from .models import get_user_email, get_time_timestamp, get_user_id, get_players_game, get_game_name, get_player_pixels, get_username
 import random
 from datetime import datetime, timedelta
 
@@ -200,6 +200,7 @@ def stats():
     ply = stats[0]
     ply["email"] = user_email #add this field so that we can render a nice name instead of an id
     ply['game_name'] = get_game_name(game) # get the name of the game so we dont show the id 
+    ply['username'] = get_username()
     lc_fmt = datetime.fromtimestamp(ply['last_click']) # format the time
     lc_fmt = lc_fmt.strftime('%m/%d %H:%M:%S')
     ply['last_click'] = lc_fmt
