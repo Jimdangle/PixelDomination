@@ -42,7 +42,7 @@ let init = (app) => {
     colorSelectorShown: false,
     leaderBoardExpanded: false,
     game_id: getUrlParameter('game_id'),
-    updateInterval: 1000,
+    updateInterval: 5000,
   };
 
   app.toggleLeaderBoard = () => {
@@ -235,7 +235,6 @@ let init = (app) => {
     ) {
       console.log("x: " + gridX + " y: " + gridY + " color: " + app.data.selectedColor);
       //console.log(this.$route.query.game_id) // outputs 'yay'
-
       axios({
         method: "post",
         url: draw_url,
@@ -247,13 +246,12 @@ let init = (app) => {
         },
       })
         .then((r) => {
-          app.data.cells[gridY][gridX] = app.data.selectedColor;
-          //console.log("can move: " + r.data.can_move);
+          //app.data.cells[gridY][gridX] = app.data.selectedColor;
+          console.log("can move: " + r.data.can_move);
           if (r.data.can_move){
+            app.data.cells[gridY][gridX] = app.data.selectedColor;
             app.drawGrid();
           }
-          
-
         })
         .catch((e) => {
           console.log(e);
@@ -269,7 +267,7 @@ let init = (app) => {
       .then((r) => {
         console.log("Got pixels");
         let boardDict = r.data.pixels;  
-        
+        console.log(r.data.pixels)
         for (let key in boardDict) {
           let [x, y] = key.split(',').map(Number);
           let color = boardDict[key];
