@@ -1,5 +1,10 @@
 let app = {};
 
+function getLastPart(url) {
+  const parts = url.split('/');
+  return parts.at(-1);
+ }
+ 
 
 var getUrlParameter = function getUrlParameter(sParam) {
   var sPageURL = window.location.search.substring(1),
@@ -341,6 +346,27 @@ let init = (app) => {
   });
 
   app.init = function () {
+
+    current_game_id = getLastPart(window.location.href);
+     axios({
+       method: "get",
+       url: game_grid_url,
+       params: {
+         game_id: current_game_id,
+       },
+     })
+       .then((r) => {
+         //app.data.cells[gridY][gridX] = app.data.selectedColor;
+         console.log("game id: " + r.data.game_id + " x_size: " + r.data.grid_x + " y_size: " + r.data.grid_y);
+         app.data.totalRows = r.data.grid_x;
+         app.data.totalCols = r.data.grid_y;
+        
+       })
+       .catch((e) => {
+         console.log(e);
+       });
+
+
     const canvasContainer = document.querySelector(".canvas_container");
     app.data.canvas = document.getElementById("canvas");
     app.data.context = app.data.canvas.getContext("2d");
