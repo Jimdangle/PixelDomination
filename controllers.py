@@ -326,7 +326,7 @@ def get_chat():
 
     for message in chat:
         user = db(db.auth_user.id == message['user']).select().first()
-        message['user'] = user['first_name'] + " " + user['last_name']
+        message['user'] = user['username']
 
     return dict(chat=chat)
 
