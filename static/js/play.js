@@ -60,7 +60,6 @@ let init = (app) => {
     axios
       .get(get_chat_messages_url, { params: { game_id: app.data.game_id } })
       .then((response) => {
-        console.log(response)
         app.data.chatMessages = response.data.chat;
         app.data.chatMessages.forEach((msg) => {
           // convert unix timestamp to time
