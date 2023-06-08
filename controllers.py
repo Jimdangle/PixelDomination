@@ -31,7 +31,7 @@ from .common import db, session, T, cache, auth, logger, authenticated, unauthen
 from py4web.utils.form import Form, FormStyleBulma
 from py4web.utils.grid import Grid, GridClassStyleBulma
 from py4web.utils.url_signer import URLSigner
-from .models import get_user_email, get_time_timestamp, get_user_id, get_players_game
+from .models import get_user_email, get_time_timestamp, get_user_id, get_players_game, get_game_name, get_player_pixels
 import random
 from datetime import datetime, timedelta
 
@@ -40,6 +40,7 @@ from time import gmtime, strftime
 url_signer = URLSigner(session)
 
 
+#Main landing page
 @action('index')
 @action.uses('index.html', db, auth.user, url_signer)
 def index():
@@ -58,6 +59,19 @@ def index():
     )
 
 
+# ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄       ▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄ 
+#▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░░▌     ▐░░▌▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌
+#▐░█▀▀▀▀▀▀▀▀▀ ▐░█▀▀▀▀▀▀▀█░▌▐░▌░▌   ▐░▐░▌▐░█▀▀▀▀▀▀▀▀▀ ▐░█▀▀▀▀▀▀▀▀▀ 
+#▐░▌          ▐░▌       ▐░▌▐░▌▐░▌ ▐░▌▐░▌▐░▌          ▐░▌          
+#▐░▌ ▄▄▄▄▄▄▄▄ ▐░█▄▄▄▄▄▄▄█░▌▐░▌ ▐░▐░▌ ▐░▌▐░█▄▄▄▄▄▄▄▄▄ ▐░█▄▄▄▄▄▄▄▄▄ 
+#▐░▌▐░░░░░░░░▌▐░░░░░░░░░░░▌▐░▌  ▐░▌  ▐░▌▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌
+#▐░▌ ▀▀▀▀▀▀█░▌▐░█▀▀▀▀▀▀▀█░▌▐░▌   ▀   ▐░▌▐░█▀▀▀▀▀▀▀▀▀  ▀▀▀▀▀▀▀▀▀█░▌
+#▐░▌       ▐░▌▐░▌       ▐░▌▐░▌       ▐░▌▐░▌                    ▐░▌
+#▐░█▄▄▄▄▄▄▄█░▌▐░▌       ▐░▌▐░▌       ▐░▌▐░█▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄█░▌
+#▐░░░░░░░░░░░▌▐░▌       ▐░▌▐░▌       ▐░▌▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌
+# ▀▀▀▀▀▀▀▀▀▀▀  ▀         ▀  ▀         ▀  ▀▀▀▀▀▀▀▀▀▀▀  ▀▀▀▀▀▀▀▀▀▀▀ 
+                                                                 
+# Create a new game to play
 @action('create_game', method=["GET", "POST"])
 @action.uses('create_game.html', db, session, auth.user)
 def add():
@@ -68,6 +82,7 @@ def add():
     return dict(form=form)
 
 
+# Join a game to play
 @action('play/<gid:int>')
 @action.uses('play.html', db, auth.user, url_signer)
 def play(gid=None):
@@ -101,24 +116,17 @@ def play(gid=None):
     )
 
 
-
-class GridPlayButton(object):
-    """This is the edit button for the grid."""
-    def __init__(self):
-        self.url = URL('play')
-        self.append_id = True # append the ID to the edit.
-        self.additional_classes = 'button is-success'
-        self.icon = 'fa-play'
-        self.text = 'Play'
-        self.message = 'Join game'
-        self.onclick = None # Used for things like confirmation.
-
-
+# Server browser route
 @action('browser', method=['POST', 'GET'])
 @action.uses('browser.html', db, auth.user)
 def browser():
     return dict(get_games_url="get_games")
 
+
+
+# Get a list of all games a player can play
+# this function is really long bc it has to handle a lot
+# it queries, and also formats the response
 @action('get_games', method=['GET'])
 @action.uses(db, auth.user)
 def get_games():
@@ -157,25 +165,82 @@ def get_games():
         output_list.append(temp)
     return dict(results=output_list[:20])
 
+
+# ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄ 
+#▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌
+#▐░█▀▀▀▀▀▀▀▀▀  ▀▀▀▀█░█▀▀▀▀ ▐░█▀▀▀▀▀▀▀█░▌ ▀▀▀▀█░█▀▀▀▀ ▐░█▀▀▀▀▀▀▀▀▀ 
+#▐░▌               ▐░▌     ▐░▌       ▐░▌     ▐░▌     ▐░▌          
+#▐░█▄▄▄▄▄▄▄▄▄      ▐░▌     ▐░█▄▄▄▄▄▄▄█░▌     ▐░▌     ▐░█▄▄▄▄▄▄▄▄▄ 
+#▐░░░░░░░░░░░▌     ▐░▌     ▐░░░░░░░░░░░▌     ▐░▌     ▐░░░░░░░░░░░▌
+# ▀▀▀▀▀▀▀▀▀█░▌     ▐░▌     ▐░█▀▀▀▀▀▀▀█░▌     ▐░▌      ▀▀▀▀▀▀▀▀▀█░▌
+#          ▐░▌     ▐░▌     ▐░▌       ▐░▌     ▐░▌               ▐░▌
+# ▄▄▄▄▄▄▄▄▄█░▌     ▐░▌     ▐░▌       ▐░▌     ▐░▌      ▄▄▄▄▄▄▄▄▄█░▌
+#▐░░░░░░░░░░░▌     ▐░▌     ▐░▌       ▐░▌     ▐░▌     ▐░░░░░░░░░░░▌
+# ▀▀▀▀▀▀▀▀▀▀▀       ▀       ▀         ▀       ▀       ▀▀▀▀▀▀▀▀▀▀▀ 
+                                                                                       
+#View game history here
+# Maybe either all games that have ever been played
+# or just games a player has played and their score once the games have completed
 @action('leaderboard')
 @action.uses('leaderboard.html', db, auth)
 def leaderboard():
     return dict()
 
+# View stats for the signed in player 
 @action('stats')
 @action.uses('stats.html', db, auth.user)
 def stats():
     user = get_user_id() # get user id
     check_if_stats_exist(user) # if they don't have a place give them one 
     user_email = get_user_email()
+    game = get_players_game()
+    pixels = get_player_pixels()
 
     stats = db(db.Ply_Stats.user == user).select() #guaranteed to have a user now 
     ply = stats[0]
-    ply["email"] = user_email
+    ply["email"] = user_email #add this field so that we can render a nice name instead of an id
+    ply['game_name'] = get_game_name(game) # get the name of the game so we dont show the id 
+    lc_fmt = datetime.fromtimestamp(ply['last_click']) # format the time
+    lc_fmt = lc_fmt.strftime('%m/%d %H:%M:%S')
+    ply['last_click'] = lc_fmt
+    ply['pixels'] = pixels['total']
+    ply['red'] = pixels['red']
+    ply['green'] = pixels['green']
+    ply['black'] = pixels['black']
+    ply['yellow'] = pixels['yellow']
+    ply['blue'] = pixels['blue']
 
     print(ply)
     return dict(ply=ply)
 
+#Count the score for a given game
+@action('count_score')
+@action.uses(db, auth.user, url_signer.verify())
+def count_score():
+    game = get_players_game() #gets the current user's last played game id
+    #Count number of pixels of each color in that game id 
+    black = db((db.Board.game_id == game) & (db.Board.color == 'black')).count()
+    red = db((db.Board.game_id == game) & (db.Board.color == 'red')).count()
+    green = db((db.Board.game_id == game) & (db.Board.color == 'green')).count()
+    blue = db((db.Board.game_id == game) & (db.Board.color == 'blue')).count()
+    yellow = db((db.Board.game_id == game) & (db.Board.color == 'yellow')).count()
+    
+    return dict(black=black, red=red, green=green, blue=blue, yellow=yellow)
+
+
+# ▄▄▄▄▄▄▄▄▄▄   ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄         ▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄        ▄  ▄▄▄▄▄▄▄▄▄▄▄ 
+#▐░░░░░░░░░░▌ ▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░▌       ▐░▌▐░░░░░░░░░░░▌▐░░▌      ▐░▌▐░░░░░░░░░░░▌
+#▐░█▀▀▀▀▀▀▀█░▌▐░█▀▀▀▀▀▀▀█░▌▐░█▀▀▀▀▀▀▀█░▌▐░▌       ▐░▌ ▀▀▀▀█░█▀▀▀▀ ▐░▌░▌     ▐░▌▐░█▀▀▀▀▀▀▀▀▀ 
+#▐░▌       ▐░▌▐░▌       ▐░▌▐░▌       ▐░▌▐░▌       ▐░▌     ▐░▌     ▐░▌▐░▌    ▐░▌▐░▌          
+#▐░▌       ▐░▌▐░█▄▄▄▄▄▄▄█░▌▐░█▄▄▄▄▄▄▄█░▌▐░▌   ▄   ▐░▌     ▐░▌     ▐░▌ ▐░▌   ▐░▌▐░▌ ▄▄▄▄▄▄▄▄ 
+#▐░▌       ▐░▌▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░▌  ▐░▌  ▐░▌     ▐░▌     ▐░▌  ▐░▌  ▐░▌▐░▌▐░░░░░░░░▌
+#▐░▌       ▐░▌▐░█▀▀▀▀█░█▀▀ ▐░█▀▀▀▀▀▀▀█░▌▐░▌ ▐░▌░▌ ▐░▌     ▐░▌     ▐░▌   ▐░▌ ▐░▌▐░▌ ▀▀▀▀▀▀█░▌
+#▐░▌       ▐░▌▐░▌     ▐░▌  ▐░▌       ▐░▌▐░▌▐░▌ ▐░▌▐░▌     ▐░▌     ▐░▌    ▐░▌▐░▌▐░▌       ▐░▌
+#▐░█▄▄▄▄▄▄▄█░▌▐░▌      ▐░▌ ▐░▌       ▐░▌▐░▌░▌   ▐░▐░▌ ▄▄▄▄█░█▄▄▄▄ ▐░▌     ▐░▐░▌▐░█▄▄▄▄▄▄▄█░▌
+#▐░░░░░░░░░░▌ ▐░▌       ▐░▌▐░▌       ▐░▌▐░░▌     ▐░░▌▐░░░░░░░░░░░▌▐░▌      ▐░░▌▐░░░░░░░░░░░▌
+# ▀▀▀▀▀▀▀▀▀▀   ▀         ▀  ▀         ▀  ▀▀       ▀▀  ▀▀▀▀▀▀▀▀▀▀▀  ▀        ▀▀  ▀▀▀▀▀▀▀▀▀▀▀ 
+                                                                                           
+# draw a box in a game for the current player
 @action('draw_url', method="POST")
 @action.uses(session, db, auth.user, url_signer.verify())
 def draw_url():
@@ -206,6 +271,7 @@ def draw_url():
     print(pixels)
     return dict(pixels=pixels, can_move=can_draw)
 
+#get the game size for the given game
 @action('game_grid_url', method="GET")
 @action.uses(session, db, auth.user, url_signer.verify())
 def game_grid_url():
@@ -216,8 +282,7 @@ def game_grid_url():
    return dict(game_id=game_id, grid_x=game_x, grid_y=game_y)
 
 
-
-
+# Get the pixels for a given game 
 @action('get_pixels')
 @action.uses(db, auth.user, url_signer.verify())
 def get_pixesl():
@@ -236,19 +301,61 @@ def get_pixesl():
     board = {f"{item['pos_x']},{item['pos_y']}": item['color'] for item in game_data}
     return dict(pixels = board)
 
-@action('count_score')
-@action.uses(db, auth.user, url_signer.verify())
-def count_score():
-    game = get_players_game() #gets the current user's last played game id
-    #Count number of pixels of each color in that game id 
-    black = db((db.Board.game_id == game) & (db.Board.color == 'black')).count()
-    red = db((db.Board.game_id == game) & (db.Board.color == 'red')).count()
-    green = db((db.Board.game_id == game) & (db.Board.color == 'green')).count()
-    blue = db((db.Board.game_id == game) & (db.Board.color == 'blue')).count()
-    yellow = db((db.Board.game_id == game) & (db.Board.color == 'yellow')).count()
-    
-    return dict(black=black, red=red, green=green, blue=blue, yellow=yellow)
 
+# ▄▄▄▄▄▄▄▄▄▄▄  ▄         ▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄ 
+#▐░░░░░░░░░░░▌▐░▌       ▐░▌▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌
+#▐░█▀▀▀▀▀▀▀▀▀ ▐░▌       ▐░▌▐░█▀▀▀▀▀▀▀█░▌ ▀▀▀▀█░█▀▀▀▀ 
+#▐░▌          ▐░▌       ▐░▌▐░▌       ▐░▌     ▐░▌     
+#▐░▌          ▐░█▄▄▄▄▄▄▄█░▌▐░█▄▄▄▄▄▄▄█░▌     ▐░▌     
+#▐░▌          ▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌     ▐░▌     
+#▐░▌          ▐░█▀▀▀▀▀▀▀█░▌▐░█▀▀▀▀▀▀▀█░▌     ▐░▌     
+#▐░▌          ▐░▌       ▐░▌▐░▌       ▐░▌     ▐░▌     
+#▐░█▄▄▄▄▄▄▄▄▄ ▐░▌       ▐░▌▐░▌       ▐░▌     ▐░▌     
+#▐░░░░░░░░░░░▌▐░▌       ▐░▌▐░▌       ▐░▌     ▐░▌     
+# ▀▀▀▀▀▀▀▀▀▀▀  ▀         ▀  ▀         ▀       ▀      
+                                                    
+@action('get_chat')
+@action.uses(db, auth.user, url_signer.verify())
+def get_chat():
+    # game_id = request.params.get('game_id')
+    game_id = get_players_game()
+
+    chat = db(db.Chat.gid == game_id).select().as_list()
+    # Limit to 20 messages
+    chat = chat[-20:]
+
+    for message in chat:
+        user = db(db.auth_user.id == message['user']).select().first()
+        message['user'] = user['first_name'] + " " + user['last_name']
+
+    return dict(chat=chat)
+
+@action('post_chat', method="POST")
+@action.uses(session, db, auth.user, url_signer.verify())
+def post_chat():
+    # game_id = request.params.get('game_id')
+    game_id = get_players_game()
+    user = get_user_id()
+    message = request.params.get('message')
+
+    print(game_id)
+
+    db.Chat.insert(gid=game_id, user=user, message=message)
+    return dict()
+
+
+# ▄         ▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄           
+#▐░▌       ▐░▌▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░▌          
+#▐░▌       ▐░▌ ▀▀▀▀█░█▀▀▀▀  ▀▀▀▀█░█▀▀▀▀ ▐░▌          
+#▐░▌       ▐░▌     ▐░▌          ▐░▌     ▐░▌          
+#▐░▌       ▐░▌     ▐░▌          ▐░▌     ▐░▌          
+#▐░▌       ▐░▌     ▐░▌          ▐░▌     ▐░▌          
+#▐░▌       ▐░▌     ▐░▌          ▐░▌     ▐░▌          
+#▐░▌       ▐░▌     ▐░▌          ▐░▌     ▐░▌          
+#▐░█▄▄▄▄▄▄▄█░▌     ▐░▌      ▄▄▄▄█░█▄▄▄▄ ▐░█▄▄▄▄▄▄▄▄▄ 
+#▐░░░░░░░░░░░▌     ▐░▌     ▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌
+# ▀▀▀▀▀▀▀▀▀▀▀       ▀       ▀▀▀▀▀▀▀▀▀▀▀  ▀▀▀▀▀▀▀▀▀▀▀ 
+                                                    
 
 
 # SQL function to check if a player exists in stats table, if not update it 
@@ -259,48 +366,6 @@ def check_if_stats_exist(uid:int, last_click:int = 0):
         db.Ply_Stats.insert(user=uid, last_click=last_click)
     
     return
-
-
-def check_if_game_id_exists(game_id:int):
-    res = db(db.Games.game_id==game_id).select()
-    if len(res) == 0:
-        return False
-    else:    
-        return True
-
-# Check if a player can place
-# using the user id as player
-# game id as game
-# see if a player can place a new tile in that game
-# return true if they can
-# return false otherwise
-def check_can_place(player:int, game:int, click_time:int):
-    print(f'{player}, {game}, {click_time}')
-    cooldown_q = db(db.Games.id == game).select()
-    try:
-        cooldown   = cooldown_q[0]['move_interval']
-    except:
-        cooldown = 0
-        print('couldnt find interval')
-    
-    last_click_q = db(db.Ply_Stats.user == player).select()
-    try:
-        print(last_click_q)
-        last_click = last_click_q[0]['last_click']
-        #print(f'last click time: {datetime.datetime.fromtimestamp(last_click)}')
-    except:
-        last_click = 0
-        print('couldnt find last click')
-
-    #print(f'current time : {datetime.datetime.fromtimestamp(click_time)}')
-    time_in_sec = (click_time - last_click)
-
-    print(f'Time since: {time_in_sec}, Time needed {cooldown}')
-    
-    if time_in_sec > cooldown:
-        return True
-    
-    return False
 
 # take in a starting timestamp
 # and a number of hours to be alive 
@@ -345,44 +410,3 @@ def check_update_gclicks(cur_game:int, cur_user:int,click_time:int):
             return True
     
     return False #Player has a row that they have not waited for 
-
-
-
-
-
-    
-
-
-
-
-
-
-@action('get_chat')
-@action.uses(db, auth.user, url_signer.verify())
-def get_chat():
-    # game_id = request.params.get('game_id')
-    game_id = get_players_game()
-
-    chat = db(db.Chat.gid == game_id).select().as_list()
-    # Limit to 20 messages
-    chat = chat[-20:]
-
-    for message in chat:
-        user = db(db.auth_user.id == message['user']).select().first()
-        message['user'] = user['first_name'] + " " + user['last_name']
-
-    return dict(chat=chat)
-
-@action('post_chat', method="POST")
-@action.uses(session, db, auth.user, url_signer.verify())
-def post_chat():
-    # game_id = request.params.get('game_id')
-    game_id = get_players_game()
-    user = get_user_id()
-    message = request.params.get('message')
-
-    print(game_id)
-
-    db.Chat.insert(gid=game_id, user=user, message=message)
-    return dict()
-
