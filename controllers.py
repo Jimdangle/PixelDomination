@@ -31,7 +31,7 @@ from .common import db, session, T, cache, auth, logger, authenticated, unauthen
 from py4web.utils.form import Form, FormStyleBulma
 from py4web.utils.grid import Grid, GridClassStyleBulma
 from py4web.utils.url_signer import URLSigner
-from .models import get_user_email, get_time_timestamp, get_user_id, get_players_game, get_game_name, get_player_pixels, get_username
+from .models import get_user_email, get_time_timestamp, get_user_id, get_players_game, get_game_name, get_player_pixels, get_username, ttl
 import random
 from datetime import datetime, timedelta
 
@@ -368,16 +368,6 @@ def check_if_stats_exist(uid:int, last_click:int = 0):
     
     return
 
-# take in a starting timestamp
-# and a number of hours to be alive 
-# calulate how much time is left based on current time 
-def ttl(timestamp_start:int, hours_to_live:int):
-    time = datetime.fromtimestamp(timestamp_start)
-    ttl_out = time + timedelta(hours=hours_to_live)
-    time_left = ttl_out - datetime.utcnow()
-
-    return time_left
-    
 
 # check and update gclicks 
 # take in a click time
