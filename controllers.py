@@ -52,6 +52,7 @@ def index():
         get_pixels_url   = URL('get_pixels', signer=url_signer),
         draw_url         = URL('draw_url', signer=url_signer),
         get_new_game_url = URL('get_new_game_url', signer=url_signer),
+        game_grid_url = URL('game_grid_url', signer=url_signer),
     )
 
 
@@ -80,6 +81,7 @@ def play(gid=None):
         game_id=gid,
         get_chat_messages_url = URL('get_chat', signer=url_signer),
         send_chat_message_url = URL('post_chat', signer=url_signer),
+        game_grid_url = URL('game_grid_url', signer=url_signer),
     )
 
 
@@ -189,6 +191,16 @@ def draw_url():
     
     print(pixels)
     return dict(pixels=pixels, can_move=can_draw)
+
+@action('game_grid_url', method="GET")
+@action.uses(session, db, auth.user, url_signer.verify())
+def game_grid_url():
+   game_id = int(request.params.get('game_id'))
+   game_id_db = db(db.Games.id == game_id).select(db.Games.x_size, db.Games.y_size)
+   game_x = game_id_db[0].__getitem__('x_size')
+   game_y = game_id_db[0].__getitem__('y_size')
+   return dict(game_id=game_id, grid_x=game_x, grid_y=game_y)
+
 
 
 
