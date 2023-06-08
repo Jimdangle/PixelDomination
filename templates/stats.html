@@ -2,6 +2,8 @@
 
 <head>
   <title>User Stats - Pixel Domination</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js">
+  </script>
 </head>
 
 <body>
@@ -143,8 +145,61 @@
           </div>
         </div>
       </div>
+      <div class="tile is-parent">
+        <div class="tile is-child notification is-info-light">
+          <canvas id="myChart" style="width:100%;max-width:700px"></canvas>
+        </div>
+      </div>
     </div>
   </div>
+
+  <div class="container">
+
+    <script>
+      const data = {
+        labels: [
+          'Red',
+          'Blue',
+          'Yellow',
+          'Green',
+          'Black'
+        ],
+        datasets: [{
+          label: 'My First Dataset',
+          data: [Number("[[=ply.red]]"), Number("[[=ply.blue]]"), Number("[[=ply.yellow]]"),Number("[[=ply.green]]"),Number("[[=ply.black]]")],
+          backgroundColor: [
+            'rgb(255, 99, 132)',
+            'rgb(54, 162, 235)',
+            'rgb(255, 205, 86)',
+            'rgb(50, 255, 50)',
+            'rgb(0,0,0)'
+          ],
+          hoverOffset: 4
+        }]
+      };
+
+      const myChart = new Chart("myChart", {
+        type: 'doughnut',
+        labels: [
+          'Red',
+          'Green',
+          'Blue',
+          'Yellow',
+          'Black'
+
+        ],
+        data: data,
+        options: {
+          parsing: {
+            key: 'nested.value'
+          }
+        }
+      });
+
+      console.log(data)
+    </script>
+  </div>
+
 
   </div>
 
