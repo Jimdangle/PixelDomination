@@ -7,9 +7,12 @@
 </style>
 
 <head>
-  
   <title>Drawable Grid</title>
   <link rel="stylesheet" href="css/custom.css" />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/3.2.1/css/font-awesome.min.css"
+  />
 </head>
 
 <body>
@@ -56,17 +59,42 @@
           <!-- Add more leaderboard items here -->
         </div>
       </div>
+      <div class="chat" style="position: absolute; bottom: 0; right: 0">
+        <div v-show="!chatOpen" class="circle" @click="chatOpen=true">
+          <i class="fa fa-comment" style="color: white;"></i>
+        </div>
+        <div v-show="chatOpen" class="chat-box">
+          <div class="chat-title">
+            <h2>Game Chat</h2>
+            <span class="minimize-arrow"
+            @click="chatOpen = false">▼</span>
+          </div>
+          <div class="messages-container">
+            <ul class="messages">
+              <li class="message-item" v-for="message in chatMessages" :key="message.id">
+                <span class="timestamp"> {{ message.time }} </span><span class="username">{{message.user}}:</span> {{ message.message }}
+              </li>
+            </ul>
+          </div>
+          <div class="input-container">
+            <input type="text" placeholder="Type your message..." v-model="chatMessage" v-on:keyup.enter="send_chat_message">
+          </div>
+        </div>
+
+
+      </div>
     </div>
   </div>
 
   [[block page_scripts]]
   <!-- Loads the index-specific js for Vue -->
   <script>
-    
     let my_callback_url = "[[=XML(my_callback_url)]]";
     let get_pixels_url = "[[=XML(get_pixels_url)]]";
     let draw_url = "[[=XML(draw_url)]]";
     let game_id = "[[=game_id]]";
+    let get_chat_messages_url = "[[=XML(get_chat_messages_url)]]";
+    let send_chat_message_url = "[[=XML(send_chat_message_url)]]";
   </script>
   <script src="js/play.js"></script>
   [[end]]
