@@ -33,6 +33,13 @@ def get_players_game():
     
     return None
 
+def get_game_name(id:int):
+    q = db.Games.id==id
+    res = db(q).select()
+    if len(res) <=0:
+        return None
+    return res[0]['name']
+
 def gen_rand_name():
     print("Hello wolf")
     random.seed(get_time_timestamp())
@@ -42,6 +49,21 @@ def gen_rand_name():
     name = f'{ADJS[adj]} {NOUNS[noun]} {N2[n2]}'
     print(name)
     return name
+
+
+def get_player_pixels():
+    user = get_user_id()
+    q = db.Board.uid == user
+    res = db(q).count()
+
+    black = db((db.Board.uid == user) & (db.Board.color == 'black')).count()
+    red = db((db.Board.uid == user) & (db.Board.color == 'red')).count()
+    green = db((db.Board.uid == user) & (db.Board.color == 'green')).count()
+    blue = db((db.Board.uid == user) & (db.Board.color == 'blue')).count()
+    yellow = db((db.Board.uid == user) & (db.Board.color == 'yellow')).count()
+
+    return dict(total=res,black=black,red=red,green=green,blue=blue,yellow=yellow)
+
 
 ### Define your table below
 #
