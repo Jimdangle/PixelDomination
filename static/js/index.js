@@ -151,12 +151,12 @@ let init = (app) => {
   }
 
   app.get_pixels = function() {
-    console.log(`Getting pixels for : ${app.get_gameid()}`)
+    
     axios({
         method: "get",
         url: get_pixels_url,
         params: {
-          game_id: app.get_gameid()
+          
         }
     })
     .then( (r) => {
@@ -170,14 +170,6 @@ let init = (app) => {
   // This contains all the methods.
   app.methods = {
     // Complete as you see fit.
-    drawGrid: app.drawGrid,
-    selectColor: app.selectColor,
-    draw: app.draw,
-    startDrawing: app.startDrawing,
-    stopDrawing: app.stopDrawing,
-    get_pixels: app.get_pixels,
-    toggleColorSelector: app.toggleColorSelector,
-    start_new_game: app.start_new_game,
   };
 
   // This creates the Vue instance.
