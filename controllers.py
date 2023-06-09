@@ -156,7 +156,6 @@ def get_games():
         # Calculate when the game will end (ttl is end time)
         time_left = ttl(game["time_started"], game['live_time'])
         # Create entry for the results list
-        print((datetime.fromtimestamp(game["time_started"]) + timedelta(hours=game['live_time'])).isoformat())
         temp = {
             'name': game['name'],
             'size': str(game['x_size']) + " by " + str(game['y_size']), # 'X by Y' for board dimensions
@@ -165,6 +164,8 @@ def get_games():
             'end_time': (datetime.fromtimestamp(game["time_started"]) + timedelta(hours=game['live_time'])).isoformat(), # Time the game will end
             'id': game['id'],
         }
+        # Skip this game if the game has expired
+        if (datetime.fromtimestamp(game["time_started"]) + timedelta(hours=game['live_time']) < datetime.utcnow()): continue
         # Add the current entry to results list
         output_list.append(temp)
     return dict(results=output_list[:20])
