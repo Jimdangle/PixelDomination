@@ -25,13 +25,14 @@ session, db, T, auth, and tempates are examples of Fixtures.
 Warning: Fixtures MUST be declared with @action.uses({fixtures}) else your app will result in undefined behavior
 """
 
-from py4web import action, request, abort, redirect, URL
+from py4web import action, request, abort, redirect, URL, Field
 from yatl.helpers import A
 from .common import db, session, T, cache, auth, logger, authenticated, unauthenticated, flash
 from py4web.utils.form import Form, FormStyleBulma
 from py4web.utils.grid import Grid, GridClassStyleBulma
 from py4web.utils.url_signer import URLSigner
 from .models import get_user_email, get_time_timestamp, get_user_id, get_players_game, get_game_name, get_player_pixels, get_username, ttl
+
 import random
 from datetime import datetime, timedelta
 
@@ -74,10 +75,12 @@ def index():
 # Create a new game to play
 @action('create_game', method=["GET", "POST"])
 @action.uses('create_game.html', db, session, auth.user)
-def add():
-    form = Form(db.Games,
-                csrf_session=session, formstyle=FormStyleBulma)
+def create_game():
+    # Serve the form from the games db
+    form = Form(db.Games, csrf_session=session, formstyle=FormStyleBulma)
     if form.accepted:
+        # Insert the entry into the database
+        # Redirect to browser page
         redirect(URL('browser'))
     return dict(form=form)
 
@@ -130,7 +133,6 @@ def browser():
 @action('get_games', method=['GET'])
 @action.uses(db, auth.user)
 def get_games():
-    print("attempt")
     try:
         search = request.params.query
     except:
@@ -154,11 +156,13 @@ def get_games():
         # Calculate when the game will end (ttl is end time)
         time_left = ttl(game["time_started"], game['live_time'])
         # Create entry for the results list
+        print((datetime.fromtimestamp(game["time_started"]) + timedelta(hours=game['live_time'])).isoformat())
         temp = {
             'name': game['name'],
-            'size': str(game['x_size']) + " by " + str(game['y_size']),
-            'move_interval': str(game['move_interval']) + "s",
-            'ttl': str(time_left).split('.')[0],
+            'size': str(game['x_size']) + " by " + str(game['y_size']), # 'X by Y' for board dimensions
+            'move_interval': str(game['move_interval']) + "s", # String of how many seconds the move interval is
+            'ttl': str(time_left).split('.')[0], # String for time left string
+            'end_time': (datetime.fromtimestamp(game["time_started"]) + timedelta(hours=game['live_time'])).isoformat(), # Time the game will end
             'id': game['id'],
         }
         # Add the current entry to results list
