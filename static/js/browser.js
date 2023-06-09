@@ -70,7 +70,7 @@ let init = (app) => {
     }).then((r) => {
       app.data.games = app.enumerate(r.data.results);
       app.data.games.forEach(element => {
-        element.end_time = new Date(element.end_time).getTime();
+        element.end_time = new Date(element.end_time + "Z").getTime();
       });
       app.updateTimers();
     }).catch((e) => { console.log(e) });
