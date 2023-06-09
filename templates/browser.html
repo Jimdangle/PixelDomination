@@ -54,18 +54,34 @@
                         </div>
                       </div>
                     </div>
-                    <div class="level-right">
-                      <div class="level-item">
-                        <div class="block has-text-right">
-                          <h1 class="title is-3 mb-5">{{ games[game._idx].ttl }}</h1>
-                          <h2 class="subtitle has-text-right">({{ game.move_interval }} cooldown)</h2>
+                    <div v-if="(games[game._idx].end_time - (new Date(Date.now()))) > 0">
+                      <div class="level-right">
+                        <div class="level-item">
+                          <div class="block has-text-right">
+                            <h1 class="title is-3 mb-5">{{ games[game._idx].ttl }}</h1>
+                            <h2 class="subtitle has-text-right">({{ game.move_interval }} cooldown)</h2>
+                          </div>
+                        </div>
+                        <div class="level-item ">
+                          <a class="button is-success control" @click="play(game.id)">
+                            <span class="icon"><i class="fa fa-play"></i></span>
+                            <span>Join Game</span>
+                          </a>
                         </div>
                       </div>
-                      <div class="level-item ">
-                        <a class="button is-success control" @click="play(game.id)">
-                          <span class="icon"><i class="fa fa-play"></i></span>
-                          <span>Join Game</span>
-                        </a>
+                    </div>
+                    <div v-else>
+                      <div class="level-right">
+                        <div class="level-item">
+                          <div class="block has-text-right">
+                            <h1 class="title is-3">Game has Ended</h1>
+                          </div>
+                        </div>
+                        <div class="level-item ">
+                          <a class="button is-info-light">
+                            <span>Game Expired</span>
+                          </a>
+                        </div>
                       </div>
                     </div>
                            
