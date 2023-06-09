@@ -41,55 +41,78 @@
         
         <div class="tile is-ancestor">
           <div class="tile is-vertical">
-            <div v-for="game in games">
+
+            <div v-if="games.length == 0">
 
               <div class="tile is-parent " style="align-content: center">
                 <div class="tile is-child box notification is-light">
                   <div class="level">
-                    <div class="level-left">
-                      <div class="level-item">
-                        <div class="block">
-                          <h1 class="title is-3 mb-5">{{ game.name }} ({{ game.id }})</h1>
-                          <h2 class="subtitle">({{ game.size }})</h2>
-                        </div>
+                    <div class="level-item">
+                      <div class="block has-text-centered">
+                        <h1 class="title is-3 mb-5">No Active Games</h1>
+                        <a class="button is-warning" href="[[=URL('create_game')]]">
+                          <span class="icon"><i class="fa fa-plus"></i></span>
+                          <span>New Game</span>
+                        </a>
                       </div>
                     </div>
-                    <div v-if="(games[game._idx].end_time - (new Date(Date.now()))) > 0">
-                      <div class="level-right">
-                        <div class="level-item">
-                          <div class="block has-text-right">
-                            <h1 class="title is-3 mb-5">{{ games[game._idx].ttl }}</h1>
-                            <h2 class="subtitle has-text-right">({{ game.move_interval }} cooldown)</h2>
-                          </div>
-                        </div>
-                        <div class="level-item ">
-                          <a class="button is-success control" @click="play(game.id)">
-                            <span class="icon"><i class="fa fa-play"></i></span>
-                            <span>Join Game</span>
-                          </a>
-                        </div>
-                      </div>
-                    </div>
-                    <div v-else>
-                      <div class="level-right">
-                        <div class="level-item">
-                          <div class="block has-text-right">
-                            <h1 class="title is-3">Game has Ended</h1>
-                          </div>
-                        </div>
-                        <div class="level-item ">
-                          <a class="button is-info-light">
-                            <span>Game Expired</span>
-                          </a>
-                        </div>
-                      </div>
-                    </div>
-                           
                   </div>
                 </div>
               </div>
 
             </div>
+            <div v-else>
+              <div v-for="game in games">
+
+                <div class="tile is-parent " style="align-content: center">
+                  <div class="tile is-child box notification is-light">
+                    <div class="level">
+                      <div class="level-left">
+                        <div class="level-item">
+                          <div class="block">
+                            <h1 class="title is-3 mb-5">{{ game.name }} ({{ game.id }})</h1>
+                            <h2 class="subtitle">({{ game.size }})</h2>
+                          </div>
+                        </div>
+                      </div>
+                      <div v-if="(games[game._idx].end_time - (new Date(Date.now()))) > 0">
+                        <div class="level-right">
+                          <div class="level-item">
+                            <div class="block has-text-right">
+                              <h1 class="title is-3 mb-5">{{ games[game._idx].ttl }}</h1>
+                              <h2 class="subtitle has-text-right">({{ game.move_interval }} cooldown)</h2>
+                            </div>
+                          </div>
+                          <div class="level-item ">
+                            <a class="button is-success control" @click="play(game.id)">
+                              <span class="icon"><i class="fa fa-play"></i></span>
+                              <span>Join Game</span>
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                      <div v-else>
+                        <div class="level-right">
+                          <div class="level-item">
+                            <div class="block has-text-right">
+                              <h1 class="title is-3">Game has Ended</h1>
+                            </div>
+                          </div>
+                          <div class="level-item ">
+                            <a class="button is-info-light">
+                              <span>Game Expired</span>
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                            
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
           </div>
         </div>
 
