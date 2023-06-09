@@ -25,13 +25,13 @@ session, db, T, auth, and tempates are examples of Fixtures.
 Warning: Fixtures MUST be declared with @action.uses({fixtures}) else your app will result in undefined behavior
 """
 
-from py4web import action, request, abort, redirect, URL
+from py4web import action, request, abort, redirect, URL, Field
 from yatl.helpers import A
 from .common import db, session, T, cache, auth, logger, authenticated, unauthenticated, flash
 from py4web.utils.form import Form, FormStyleBulma
 from py4web.utils.grid import Grid, GridClassStyleBulma
 from py4web.utils.url_signer import URLSigner
-from .models import get_user_email, get_time_timestamp, get_user_id, get_players_game, get_game_name, get_player_pixels, get_username
+from .models import get_user_email, gen_rand_name, get_time_timestamp, get_user_id, get_players_game, get_game_name, get_player_pixels, get_username
 import random
 from datetime import datetime, timedelta
 
@@ -74,10 +74,12 @@ def index():
 # Create a new game to play
 @action('create_game', method=["GET", "POST"])
 @action.uses('create_game.html', db, session, auth.user)
-def add():
-    form = Form(db.Games,
-                csrf_session=session, formstyle=FormStyleBulma)
+def create_game():
+    # Serve the form from the games db
+    form = Form(db.Games, csrf_session=session, formstyle=FormStyleBulma)
     if form.accepted:
+        # Insert the entry into the database
+        # Redirect to browser page
         redirect(URL('browser'))
     return dict(form=form)
 

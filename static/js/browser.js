@@ -54,7 +54,6 @@ let init = (app) => {
       app.data.games.forEach(element => {
         console.log(element.end_time);
         element.end_time = new Date(element.end_time + "Z").getTime();
-        console.log(element.end_time);
       });
       app.updateTimers();
       setInterval(() => {
