@@ -82,7 +82,7 @@ db.define_table('Games',
                 Field('y_size', 'integer', required=True, requires=IS_INT_IN_RANGE(20,200,error_message='pick between 20,200')),
                 Field('time_started','integer',required=True, default=get_time_timestamp()),
                 Field('move_interval','integer',required=True),
-                Field('live_time', 'integer', required=True, requires=IS_IN_SET([12,24,48,72]))
+                Field('live_time', 'integer', required=True, requires=IS_IN_SET([1,2,4,6,12,24,48,72]))
                 )
 
 db.Games.time_started.writable  = False

@@ -29,11 +29,10 @@ let init = (app) => {
     app.data.games.forEach(element => {
       // Print out the time left
       var diff = element.end_time - now;
-
       // Get values for each amount
-      var days = Math.floor(diff % (1000 * 60 * 60 * 24 * 7) / (1000 * 60 * 60 * 24)) - 1;
-      var hh = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)) - 1;
-      var mm = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)) - 1;
+      var days = Math.floor(diff % (1000 * 60 * 60 * 24 * 7) / (1000 * 60 * 60 * 24));
+      var hh = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      var mm = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
       var ss = Math.floor((diff % (1000 * 60)) / 1000);
       // Add padding 0s if necesary
       if (ss < 10) ss = "0" + ss;
@@ -53,8 +52,9 @@ let init = (app) => {
     }).then((r) => {
       app.data.games = app.enumerate(r.data.results);
       app.data.games.forEach(element => {
-        element.end_time = new Date(element.end_time).getTime();
-        
+        console.log(element.end_time);
+        element.end_time = new Date(element.end_time + "Z").getTime();
+        console.log(element.end_time);
       });
       app.updateTimers();
       setInterval(() => {
