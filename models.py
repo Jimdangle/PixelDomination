@@ -8,7 +8,7 @@ NOUNS = ['blood', 'idiot', 'toaster', 'legend', 'death', 'therapy', 'psychic', '
 
 N2 = ['rage', 'wish', 'ground' ,'chef', 'drug', 'cake', 'maker', 'pot', 'brakes']
 
-import datetime
+from datetime import datetime,timedelta
 from .common import db, Field, auth
 from pydal.validators import *
 import random
@@ -23,7 +23,7 @@ def get_user_email():
     return auth.current_user.get('email') if auth.current_user else None
 
 def get_time():
-    return datetime.datetime.utcnow()
+    return datetime.utcnow()
 
 def get_time_timestamp():
     return get_time().timestamp()
@@ -164,3 +164,32 @@ def clean_tables():
 # Uncomment to wipe tables
 # We should probably be doing this on every pull
 #clean_tables()
+
+
+def ttl(timestamp_start:int, hours_to_live:int):
+    time = datetime.fromtimestamp(timestamp_start)
+    ttl_out = time + timedelta(hours=hours_to_live)
+    time_left = ttl_out - datetime.utcnow()
+
+    return time_left
+
+# Clear a Games pixels from the Board table
+# use to clean up after expired game so we can save space in the Board table
+def clear_game_board(gid:int):
+    q = db.Board.game_id == gid # pixels with game_id == gid
+    r = db(q).delete() #delete them
+    db.commit()
+    return
+
+def check_expired_games():
+    q = db.Games.time_started < get_time_timestamp #games created before now 
+    games = db(q).as_list() #select as a list so we can go over them
+
+    dead_games = list()
+    for game in games: 
+        time_started = game['time_started']
+        live_time    = game['live_time']
+        if ttl(time_started,live_time) <= 0:
+            dead_games.append(game['id']) #add the id of the dead game to the list
+
+    return dead_games()
