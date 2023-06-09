@@ -10,6 +10,9 @@ let init = (app) => {
     // Complete as you see fit.
     games: [],
     search_query: "",
+    refreshTimers: function () {
+  
+    },
   };
 
   app.enumerate = (a) => {
@@ -21,6 +24,26 @@ let init = (app) => {
     return a;
   };
 
+  app.updateTimers = function () {
+    var now = new Date(Date.now())
+    app.data.games.forEach(element => {
+      // Print out the time left
+      var diff = element.end_time - now;
+
+      // Get values for each amount
+      var days = Math.floor(diff % (1000 * 60 * 60 * 24 * 7) / (1000 * 60 * 60 * 24)) - 1;
+      var hh = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)) - 1;
+      var mm = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)) - 1;
+      var ss = Math.floor((diff % (1000 * 60)) / 1000);
+      // Add padding 0s if necesary
+      if (ss < 10) ss = "0" + ss;
+      if (mm < 10) mm = "0" + mm;
+      if (hh < 10) hh = "0" + hh;
+      if (days > 0) element.ttl = days + " Days " + hh + ":" + mm + ":" + ss;
+      else element.ttl = hh + ":" + mm + ":" + ss;
+    });
+  }
+
   app.get_games = function () {
     // Get the games from py4web
     axios({
@@ -28,8 +51,15 @@ let init = (app) => {
       url: get_games_url,
       //params: {query: app.vue.search_query},
     }).then((r) => {
-      app.data.games = r.data.results;
-      console.log(app.data.games);
+      app.data.games = app.enumerate(r.data.results);
+      app.data.games.forEach(element => {
+        element.end_time = new Date(element.end_time).getTime();
+        
+      });
+      app.updateTimers();
+      setInterval(() => {
+        app.updateTimers();
+      }, 1000);
     }).catch((e) => { console.log(e) });
   }
 
@@ -39,7 +69,11 @@ let init = (app) => {
       url: get_games_url,
       params: {query: app.vue.search_query},
     }).then((r) => {
-      app.data.games = r.data.results;
+      app.data.games = app.enumerate(r.data.results);
+      app.data.games.forEach(element => {
+        element.end_time = new Date(element.end_time).getTime();
+      });
+      app.updateTimers();
     }).catch((e) => { console.log(e) });
   }
 

@@ -154,11 +154,13 @@ def get_games():
         # Calculate when the game will end (ttl is end time)
         time_left = ttl(game["time_started"], game['live_time'])
         # Create entry for the results list
+        print(datetime.fromtimestamp(game["time_started"]).isoformat(), timedelta(hours=game['live_time']), (datetime.fromtimestamp(game["time_started"]) + timedelta(hours=game['live_time'])).isoformat())
         temp = {
             'name': game['name'],
-            'size': str(game['x_size']) + " by " + str(game['y_size']),
-            'move_interval': str(game['move_interval']) + "s",
-            'ttl': str(time_left).split('.')[0],
+            'size': str(game['x_size']) + " by " + str(game['y_size']), # 'X by Y' for board dimensions
+            'move_interval': str(game['move_interval']) + "s", # String of how many seconds the move interval is
+            'ttl': str(time_left).split('.')[0], # String for time left string
+            'end_time': (datetime.fromtimestamp(game["time_started"]) + timedelta(hours=game['live_time'])).isoformat(), # Time the game will end
             'id': game['id'],
         }
         # Add the current entry to results list
