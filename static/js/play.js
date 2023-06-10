@@ -29,8 +29,8 @@ let init = (app) => {
     context: null,
     drag: false,
     cellSize: 20,
-    totalRows: 100,
-    totalCols: 100,
+    totalRows: 200,
+    totalCols: 200,
     initialRows: 40,
     initialCols: 40,
     cells: Array(200).fill(Array(200).fill("white")),
@@ -197,61 +197,8 @@ let init = (app) => {
     });
   };
 
-  // app.wheel = function (event) {
-  //   event.preventDefault();
-
-  //   const canvasBounds = app.data.canvas.getBoundingClientRect();
-  //   const mouseX = event.clientX - canvasBounds.left;
-  //   const mouseY = event.clientY - canvasBounds.top;
-
-  //   const oldZoom = app.data.cameraZoom;
-
-  //   if (event.deltaY < 0) {
-  //     app.data.cameraZoom *= 1.1;
-  //   } else {
-  //     app.data.cameraZoom /= 1.1;
-  //   }
-
-  //   app.data.cameraZoom = Math.min(app.data.cameraZoom, app.data.MAX_ZOOM);
-  //   app.data.cameraZoom = Math.max(app.data.cameraZoom, app.data.MIN_ZOOM);
-
-  //   const newZoom = app.data.cameraZoom;
-
-  //   // Adjust cameraOffset based on the new zoom level and the cursor position
-  //   const scaleFactor = newZoom / oldZoom;
-  //   const offsetX = mouseX - (mouseX - app.data.cameraOffset.x) * scaleFactor;
-  //   const offsetY = mouseY - (mouseY - app.data.cameraOffset.y) * scaleFactor;
-
-  //   app.data.cameraOffset.x = offsetX;
-  //   app.data.cameraOffset.y = offsetY;
-
-  //   // Calculate the maximum allowed camera offset based on the zoom level and canvas size
-  //   const maxOffsetX =
-  //     (app.data.totalCols * app.data.cellSize - app.data.canvas.width) /
-  //     (2 * newZoom);
-  //   const maxOffsetY =
-  //     (app.data.totalRows * app.data.cellSize - app.data.canvas.height) /
-  //     (2 * newZoom);
-
-  //   // Clamp the camera offset within the maximum allowed range
-  //   app.data.cameraOffset.x = Math.max(
-  //     -maxOffsetX,
-  //     Math.min(maxOffsetX, app.data.cameraOffset.x)
-  //   );
-  //   app.data.cameraOffset.y = Math.max(
-  //     -maxOffsetY,
-  //     Math.min(maxOffsetY, app.data.cameraOffset.y)
-  //   );
-
-  //   app.drawGrid();
-  // };
-
   app.wheel = function (event) {
     event.preventDefault();
-  
-    const canvasBounds = app.data.canvas.getBoundingClientRect();
-    const mouseX = event.clientX - canvasBounds.left;
-    const mouseY = event.clientY - canvasBounds.top;
   
     const oldZoom = app.data.cameraZoom;
   
@@ -266,42 +213,28 @@ let init = (app) => {
   
     const newZoom = app.data.cameraZoom;
   
-    // Adjust cameraOffset based on the new zoom level and the cursor position
-    // const scaleFactor = oldZoom / newZoom;
-    // const newOffsetX = (mouseX - app.data.cameraOffset.x) * (1 - scaleFactor) + app.data.cameraOffset.x;
-    // const newOffsetY = (mouseY - app.data.cameraOffset.y) * (1 - scaleFactor) + app.data.cameraOffset.y;
-  
-    const newOffsetX = app.data.cameraOffset.x - (mouseX / oldZoom - mouseX / newZoom);
-    const newOffsetY = app.data.cameraOffset.y - (mouseY / oldZoom - mouseY / newZoom);
-  
+    const totalGridWidth = app.data.totalCols * app.data.cellSize;
+    const totalGridHeight = app.data.totalRows * app.data.cellSize;
     
-    // Calculate the maximum allowed camera offset based on the zoom level and canvas size
-    let maxOffsetX =
-      (app.data.totalCols * app.data.cellSize - app.data.canvas.width / 2) /
-      newZoom;
-    let maxOffsetY =
-      (app.data.totalRows * app.data.cellSize - app.data.canvas.height / 2) /
-      newZoom;
-
+    const boundingBoxWidth = Math.max(app.data.canvas.width / newZoom, totalGridWidth) + app.data.canvas.width / newZoom;
+    const boundingBoxHeight = Math.max(app.data.canvas.height / newZoom, totalGridHeight) + app.data.canvas.height / newZoom;
   
-    // Set the margin (in pixels) to keep the center of the grid at the center of the canvas
-    let marginX = maxOffsetX - (app.data.canvas.width / (2 * newZoom));
-    let marginY = maxOffsetY - (app.data.canvas.height / (2 * newZoom));
-  
-    // Clamp the camera offset within the maximum allowed range
+    let maxOffsetX = boundingBoxWidth / 2;
+    let maxOffsetY = boundingBoxHeight / 2;
+    
     app.data.cameraOffset.x = Math.max(
-      -maxOffsetX + marginX,
-      Math.min(maxOffsetX - marginX, newOffsetX)
+      -maxOffsetX,
+      Math.min(maxOffsetX, app.data.cameraOffset.x)
     );
     app.data.cameraOffset.y = Math.max(
-      -maxOffsetY + marginY,
-      Math.min(maxOffsetY - marginY, newOffsetY)
+      -maxOffsetY,
+      Math.min(maxOffsetY, app.data.cameraOffset.y)
     );
   
     app.drawGrid();
   };
   
-  
+    
 
   app.dblclick = function (event) {
     const canvasBounds = app.data.canvas.getBoundingClientRect();
