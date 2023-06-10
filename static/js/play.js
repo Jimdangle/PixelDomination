@@ -1,23 +1,24 @@
 let app = {};
 
 function getLastPart(url) {
-  const parts = url.split('/');
+  const parts = url.split("/");
   return parts.at(-1);
- }
- 
+}
 
 var getUrlParameter = function getUrlParameter(sParam) {
   var sPageURL = window.location.search.substring(1),
-      sURLVariables = sPageURL.split('&'),
-      sParameterName,
-      i;
+    sURLVariables = sPageURL.split("&"),
+    sParameterName,
+    i;
 
   for (i = 0; i < sURLVariables.length; i++) {
-      sParameterName = sURLVariables[i].split('=');
+    sParameterName = sURLVariables[i].split("=");
 
-      if (sParameterName[0] === sParam) {
-          return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
-      }
+    if (sParameterName[0] === sParam) {
+      return sParameterName[1] === undefined
+        ? true
+        : decodeURIComponent(sParameterName[1]);
+    }
   }
   return false;
 };
@@ -29,11 +30,11 @@ let init = (app) => {
     context: null,
     drag: false,
     cellSize: 20,
-    totalRows: 100,
-    totalCols: 100,
+    totalRows: 200,
+    totalCols: 200,
     initialRows: 40,
     initialCols: 40,
-    cells: Array(100).fill(Array(100).fill("white")),
+    cells: Array(200).fill(Array(200).fill("white")),
     cameraOffset: { x: 0, y: 0 },
     cameraZoom: 1,
     MAX_ZOOM: 5,
@@ -46,7 +47,7 @@ let init = (app) => {
     isDragging: false,
     colorSelectorShown: false,
     leaderBoardExpanded: false,
-    game_id: getUrlParameter('game_id'),
+    game_id: getUrlParameter("game_id"),
     chatOpen: false,
     chatMessages: [],
     chatMessage: "",
@@ -121,13 +122,21 @@ let init = (app) => {
     let newCameraOffsetX = app.data.cameraOffset.x + dx / app.data.cameraZoom;
     let newCameraOffsetY = app.data.cameraOffset.y + dy / app.data.cameraZoom;
 
-    // Get the maximum allowed offsets based on the grid size and zoom level
-    let maxOffsetX =
-      (app.data.totalCols * app.data.cellSize - app.data.canvas.width) /
-      (2 * app.data.cameraZoom);
-    let maxOffsetY =
-      (app.data.totalRows * app.data.cellSize - app.data.canvas.height) /
-      (2 * app.data.cameraZoom);
+    // Calculate the total grid size
+    let totalGridWidth = app.data.totalCols * app.data.cellSize;
+    let totalGridHeight = app.data.totalRows * app.data.cellSize;
+
+    // Calculate the "bounding box" size, adding a margin which is half of the canvas size
+    let boundingBoxWidth =
+      Math.max(app.data.canvas.width / app.data.cameraZoom, totalGridWidth) +
+      200; // add 200 as margin
+    let boundingBoxHeight =
+      Math.max(app.data.canvas.height / app.data.cameraZoom, totalGridHeight) +
+      200; // add 200 as margin
+
+    // The maximum offset is half of the bounding box size
+    let maxOffsetX = boundingBoxWidth / 2;
+    let maxOffsetY = boundingBoxHeight / 2;
 
     // Limit the offsets
     app.data.cameraOffset.x = Math.max(
@@ -160,17 +169,29 @@ let init = (app) => {
       ctx.translate(app.data.canvas.width / 2, app.data.canvas.height / 2);
       ctx.scale(app.data.cameraZoom, app.data.cameraZoom);
       ctx.translate(
-        (-app.data.totalCols * app.data.cellSize) / 2 + app.data.cameraOffset.x,
-        (-app.data.totalRows * app.data.cellSize) / 2 + app.data.cameraOffset.y
+        -app.data.totalCols * app.data.cellSize * 0.5 + app.data.cameraOffset.x,
+        -app.data.totalRows * app.data.cellSize * 0.5 + app.data.cameraOffset.y
       );
 
-      // The actual grid drawing
+      // Calculate the visible range of cells
       let cellSize = app.data.cellSize;
-      let totalRows = app.data.totalRows;
-      let totalCols = app.data.totalCols;
+      let zoom = app.data.cameraZoom;
+      let visibleRows = Math.ceil(app.data.canvas.height / (cellSize * zoom));
+      let visibleCols = Math.ceil(app.data.canvas.width / (cellSize * zoom));
+      let startRow = Math.max(
+        Math.floor(-ctx.getTransform().f / (cellSize * zoom)),
+        0
+      );
+      let startCol = Math.max(
+        Math.floor(-ctx.getTransform().e / (cellSize * zoom)),
+        0
+      );
+      let endRow = Math.min(startRow + visibleRows + 1, app.data.totalRows);
+      let endCol = Math.min(startCol + visibleCols + 1, app.data.totalCols);
 
-      for (let i = 0; i < totalRows; i++) {
-        for (let j = 0; j < totalCols; j++) {
+      // The actual grid drawing
+      for (let i = startRow; i < endRow; i++) {
+        for (let j = startCol; j < endCol; j++) {
           let x = j * cellSize;
           let y = i * cellSize;
 
@@ -180,7 +201,6 @@ let init = (app) => {
           } else {
             ctx.fillStyle = app.data.cells[i][j];
           }
-          ctx.fillStyle = app.data.cells[i][j];
           ctx.fillRect(x, y, cellSize, cellSize);
 
           // Draw grid
@@ -196,16 +216,12 @@ let init = (app) => {
   app.wheel = function (event) {
     event.preventDefault();
 
-    const canvasBounds = app.data.canvas.getBoundingClientRect();
-    const mouseX = event.clientX - canvasBounds.left;
-    const mouseY = event.clientY - canvasBounds.top;
-
     const oldZoom = app.data.cameraZoom;
 
     if (event.deltaY < 0) {
-      app.data.cameraZoom *= 1.1;
+      app.data.cameraZoom *= 1.02;
     } else {
-      app.data.cameraZoom /= 1.1;
+      app.data.cameraZoom /= 1.02;
     }
 
     app.data.cameraZoom = Math.min(app.data.cameraZoom, app.data.MAX_ZOOM);
@@ -213,23 +229,19 @@ let init = (app) => {
 
     const newZoom = app.data.cameraZoom;
 
-    // Adjust cameraOffset based on the new zoom level and the cursor position
-    const scaleFactor = newZoom / oldZoom;
-    const offsetX = mouseX - (mouseX - app.data.cameraOffset.x) * scaleFactor;
-    const offsetY = mouseY - (mouseY - app.data.cameraOffset.y) * scaleFactor;
+    const totalGridWidth = app.data.totalCols * app.data.cellSize;
+    const totalGridHeight = app.data.totalRows * app.data.cellSize;
 
-    app.data.cameraOffset.x = offsetX;
-    app.data.cameraOffset.y = offsetY;
+    const boundingBoxWidth =
+      Math.max(app.data.canvas.width / newZoom, totalGridWidth) +
+      app.data.canvas.width / newZoom;
+    const boundingBoxHeight =
+      Math.max(app.data.canvas.height / newZoom, totalGridHeight) +
+      app.data.canvas.height / newZoom;
 
-    // Calculate the maximum allowed camera offset based on the zoom level and canvas size
-    const maxOffsetX =
-      (app.data.totalCols * app.data.cellSize - app.data.canvas.width) /
-      (2 * newZoom);
-    const maxOffsetY =
-      (app.data.totalRows * app.data.cellSize - app.data.canvas.height) /
-      (2 * newZoom);
+    let maxOffsetX = boundingBoxWidth / 2;
+    let maxOffsetY = boundingBoxHeight / 2;
 
-    // Clamp the camera offset within the maximum allowed range
     app.data.cameraOffset.x = Math.max(
       -maxOffsetX,
       Math.min(maxOffsetX, app.data.cameraOffset.x)
@@ -270,7 +282,9 @@ let init = (app) => {
       gridY >= 0 &&
       gridY < app.data.totalRows
     ) {
-      console.log("x: " + gridX + " y: " + gridY + " color: " + app.data.selectedColor);
+      console.log(
+        "x: " + gridX + " y: " + gridY + " color: " + app.data.selectedColor
+      );
       //console.log(this.$route.query.game_id) // outputs 'yay'
       axios({
         method: "post",
@@ -285,7 +299,7 @@ let init = (app) => {
         .then((r) => {
           //app.data.cells[gridY][gridX] = app.data.selectedColor;
           console.log("can move: " + r.data.can_move);
-          if (r.data.can_move){
+          if (r.data.can_move) {
             app.data.cells[gridY][gridX] = app.data.selectedColor;
             app.drawGrid();
           }
@@ -303,10 +317,10 @@ let init = (app) => {
     })
       .then((r) => {
         console.log("Got pixels");
-        let boardDict = r.data.pixels;  
+        let boardDict = r.data.pixels;
         // console.log(r.data.pixels)
         for (let key in boardDict) {
-          let [x, y] = key.split(',').map(Number);
+          let [x, y] = key.split(",").map(Number);
           let color = boardDict[key];
           app.data.cells[x][y] = color;
         }
@@ -319,7 +333,7 @@ let init = (app) => {
       });
   };
 
-  app.count_score = function() {
+  app.count_score = function () {
     axios({
       method: "get",
       url: count_score_url,
@@ -327,11 +341,12 @@ let init = (app) => {
       .then((r) => {
         console.log("Got score");
         app.data.add_scores = [
-        {name: "Black", count: r.data.black}, 
-        {name: "Red", count: r.data.red}, 
-        {name: "Green", count: r.data.green},
-        {name: "Blue", count: r.data.blue},
-        {name: "Yellow", count: r.data.yellow}]; 
+          { name: "Black", count: r.data.black },
+          { name: "Red", count: r.data.red },
+          { name: "Green", count: r.data.green },
+          { name: "Blue", count: r.data.blue },
+          { name: "Yellow", count: r.data.yellow },
+        ];
         app.data.add_scores.sort((a, b) => b.count - a.count);
       })
       .catch((e) => {
@@ -341,11 +356,13 @@ let init = (app) => {
   };
 
   app.updateTimer = function () {
-    var now = new Date(Date.now())
+    var now = new Date(Date.now());
     // Print out the time left
     var diff = app.data.game_info.end_time - now;
     // Get values for each amount
-    var days = Math.floor(diff % (1000 * 60 * 60 * 24 * 7) / (1000 * 60 * 60 * 24));
+    var days = Math.floor(
+      (diff % (1000 * 60 * 60 * 24 * 7)) / (1000 * 60 * 60 * 24)
+    );
     var hh = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
     var mm = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
     var ss = Math.floor((diff % (1000 * 60)) / 1000);
@@ -353,9 +370,10 @@ let init = (app) => {
     if (ss < 10) ss = "0" + ss;
     if (mm < 10) mm = "0" + mm;
     if (hh < 10) hh = "0" + hh;
-    if (days > 0) app.data.game_info.ttl = days + " Days " + hh + ":" + mm + ":" + ss;
+    if (days > 0)
+      app.data.game_info.ttl = days + " Days " + hh + ":" + mm + ":" + ss;
     else app.data.game_info.ttl = hh + ":" + mm + ":" + ss;
-  }
+  };
 
   app.update = () => {
     app.get_pixels();
@@ -387,38 +405,44 @@ let init = (app) => {
   });
 
   app.init = function () {
-
     current_game_id = getLastPart(window.location.href);
-     axios({
-       method: "get",
-       url: game_grid_url,
-       params: {
-         game_id: current_game_id,
-       },
-     })
-       .then((r) => {
-          //app.data.cells[gridY][gridX] = app.data.selectedColor;
-          console.log("game id: " + r.data.game_id + " x_size: " + r.data.grid_x + " y_size: " + r.data.grid_y);
-          app.data.totalRows = r.data.grid_x;
-          app.data.totalCols = r.data.grid_y;
+    axios({
+      method: "get",
+      url: game_grid_url,
+      params: {
+        game_id: current_game_id,
+      },
+    })
+      .then((r) => {
+        //app.data.cells[gridY][gridX] = app.data.selectedColor;
+        console.log(
+          "game id: " +
+            r.data.game_id +
+            " x_size: " +
+            r.data.grid_x +
+            " y_size: " +
+            r.data.grid_y
+        );
+        app.data.totalRows = r.data.grid_x;
+        app.data.totalCols = r.data.grid_y;
 
-          // Let's get the end_time and parse it
-          app.data.game_info = r.data.game_info;
-          // Parse the end_time to a time in milliseconds
-          app.data.game_info.end_time = new Date(app.data.game_info.end_time + "Z").getTime();
-          // update timer
+        // Let's get the end_time and parse it
+        app.data.game_info = r.data.game_info;
+        // Parse the end_time to a time in milliseconds
+        app.data.game_info.end_time = new Date(
+          app.data.game_info.end_time + "Z"
+        ).getTime();
+        // update timer
+        app.updateTimer();
+        // Set interval to update timer every second
+        setInterval(() => {
           app.updateTimer();
-          // Set interval to update timer every second
-          setInterval(() => {
-            app.updateTimer();
-          }, 1000);
-          console.log(app.data.game_info);
-        
-       })
-       .catch((e) => {
-         console.log(e);
-       });
-
+        }, 1000);
+        console.log(app.data.game_info);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
 
     const canvasContainer = document.querySelector(".canvas_container");
     app.data.canvas = document.getElementById("canvas");
