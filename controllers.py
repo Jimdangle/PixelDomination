@@ -285,7 +285,11 @@ def game_grid_url():
    game_id_db = db(db.Games.id == game_id).select(db.Games.x_size, db.Games.y_size)
    game_x = game_id_db[0].__getitem__('x_size')
    game_y = game_id_db[0].__getitem__('y_size')
-   return dict(game_id=game_id, grid_x=game_x, grid_y=game_y)
+   # Let's fetch game info, so that we can pass it to the front end
+   game_info = db(db.Games.id == game_id).select().first()
+   # Calculate the end time, which will we use in the front end to decrement the timer
+   game_info['end_time'] = (datetime.fromtimestamp(game_info["time_started"]) + timedelta(hours=game_info['live_time'])).isoformat()
+   return dict(game_id=game_id, grid_x=game_x, grid_y=game_y,game_info=game_info)
 
 
 # Get the pixels for a given game 

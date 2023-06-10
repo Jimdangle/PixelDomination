@@ -52,6 +52,7 @@ let init = (app) => {
     chatMessage: "",
     updateInterval: 5000,
     add_scores: [],
+    game_info: {},
   };
 
   app.toggleLeaderBoard = () => {
@@ -339,6 +340,22 @@ let init = (app) => {
       });
   };
 
+  app.updateTimer = function () {
+    var now = new Date(Date.now())
+    // Print out the time left
+    var diff = app.data.game_info.end_time - now;
+    // Get values for each amount
+    var days = Math.floor(diff % (1000 * 60 * 60 * 24 * 7) / (1000 * 60 * 60 * 24));
+    var hh = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    var mm = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    var ss = Math.floor((diff % (1000 * 60)) / 1000);
+    // Add padding 0s if necesary
+    if (ss < 10) ss = "0" + ss;
+    if (mm < 10) mm = "0" + mm;
+    if (hh < 10) hh = "0" + hh;
+    if (days > 0) app.data.game_info.ttl = days + " Days " + hh + ":" + mm + ":" + ss;
+    else app.data.game_info.ttl = hh + ":" + mm + ":" + ss;
+  }
 
   app.update = () => {
     app.get_pixels();
@@ -380,10 +397,22 @@ let init = (app) => {
        },
      })
        .then((r) => {
-         //app.data.cells[gridY][gridX] = app.data.selectedColor;
-         console.log("game id: " + r.data.game_id + " x_size: " + r.data.grid_x + " y_size: " + r.data.grid_y);
-         app.data.totalRows = r.data.grid_x;
-         app.data.totalCols = r.data.grid_y;
+          //app.data.cells[gridY][gridX] = app.data.selectedColor;
+          console.log("game id: " + r.data.game_id + " x_size: " + r.data.grid_x + " y_size: " + r.data.grid_y);
+          app.data.totalRows = r.data.grid_x;
+          app.data.totalCols = r.data.grid_y;
+
+          // Let's get the end_time and parse it
+          app.data.game_info = r.data.game_info;
+          // Parse the end_time to a time in milliseconds
+          app.data.game_info.end_time = new Date(app.data.game_info.end_time + "Z").getTime();
+          // update timer
+          app.updateTimer();
+          // Set interval to update timer every second
+          setInterval(() => {
+            app.updateTimer();
+          }, 1000);
+          console.log(app.data.game_info);
         
        })
        .catch((e) => {
