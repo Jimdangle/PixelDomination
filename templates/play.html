@@ -18,105 +18,133 @@
 <body>
   <div id="vue-target">
 
+    <div v-if="(game_info.end_time - (new Date(Date.now()))) <= 0">
+      <!--If the game has expired-->
+      <div class="container box notification is-info-light mb-4 mt-4">
+        <div class="level">
+          <div class="level-item">
+            <h1 class="title is-2"> {{ game_info.name}} </h1>
+          </div>
+        </div>
+        <div class="level">
+          <div class="level-item">
+            <p>
+              This game has expired, thank you all for playing.
+            </p>
+          </div>
+        </div>
+        <div class="level">
+          <div class="level-item">
+            <a class="button is-danger control" href="[[=URL('browser')]]">
+              <span class="icon"><i class="fa fa-reply"></i></span>
+              <span>Back to Server Browser</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div v-else>
+      <!--If the game is active-->
+      <div class="container box notification is-info-light mb-4 mt-4">
+        <div class="level">
+          <div class="level-left">
+            <div class="level-item">
+              <a class="button is-danger control" href="[[=URL('browser')]]">
+                <span class="icon"><i class="fa fa-reply"></i></span>
+                <span>Back</span>
+              </a>
+            </div>
+            <div class="level-item"></div>
+            <div class="level-item">
+              <h1 class="title is-2"> {{ game_info.name}} </h1>
+            </div>
+          </div>
+          <div class="level-right">
+            <div class="level-item">
+              <h1 class="subtitle is-4"> {{ game_info.ttl}} </h1>
+            </div>
+          </div>
+        </div>
+      </div>
   
-  <div class="container box notification is-info-light mb-4 mt-4">
-    <div class="level">
-      <div class="level-left">
-        <div class="level-item">
-          <a class="button is-danger control" href="[[=URL('browser')]]">
-            <span class="icon"><i class="fa fa-reply"></i></span>
-            <span>Back</span>
-          </a>
-        </div>
-        <div class="level-item"></div>
-        <div class="level-item">
-          <h1 class="title is-2"> {{ game_info.name}} </h1>
-        </div>
-      </div>
-      <div class="level-right">
-        <div class="level-item">
-          <h1 class="subtitle is-4"> {{ game_info.ttl}} </h1>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div
-    class="centering"
-    style="display: flex; justify-content: center; align-items: center"
-  >
-    <div
-      class="canvas_container"
-      style="width: 80vw; height: 80vh; position: relative"
-    >
-      <canvas id="canvas" ref="canvas" style="user-select: none"></canvas>
-      <div id="color-picker" style="position: absolute; bottom: 0; left: 0">
-        <div class="expand">
-          <div
-            class="color currentcolor"
-            style="background-color: black"
-            @click="toggleColorSelector()"
-          ></div>
-          <div class="colorSelector" v-show="colorSelectorShown">
-            <div
-              class="color"
-              v-for="color in colors"
-              :style="{ backgroundColor: color }"
-              v-show="color !== selectedColor"
-              @click="selectColor(color)"
-            ></div>
-          </div>
-        </div>
-      </div>
       <div
-        id="leaderboard"
-        class="leaderboard-container"
-        style="position: absolute; top: 0; left: 0"
+        class="centering"
+        style="display: flex; justify-content: center; align-items: center"
       >
-        <h2 class="leaderboard-heading" @click="toggleLeaderBoard">
-          Leaderboard
-        </h2>
-        <div class="leaderboard-items" v-show="leaderBoardExpanded">
-          <!-- Add more leaderboard items here -->
-          <div v-for="obj in add_scores">
-            {{obj.name}} : {{obj.count}}
+        <div
+          class="canvas_container"
+          style="width: 80vw; height: 80vh; position: relative"
+        >
+          <canvas id="canvas" ref="canvas" style="user-select: none"></canvas>
+          <div id="color-picker" style="position: absolute; bottom: 0; left: 0">
+            <div class="expand">
+              <div
+                class="color currentcolor"
+                style="background-color: black"
+                @click="toggleColorSelector()"
+              ></div>
+              <div class="colorSelector" v-show="colorSelectorShown">
+                <div
+                  class="color"
+                  v-for="color in colors"
+                  :style="{ backgroundColor: color }"
+                  v-show="color !== selectedColor"
+                  @click="selectColor(color)"
+                ></div>
+              </div>
+            </div>
           </div>
-
-        </div>
-        </div>
-      </div>
-      <div class="chat" style="position: absolute; bottom: 0; right: 0">
-        <div v-show="!chatOpen" class="circle" @click="chatOpen=true">
-          <i class="fa fa-comment" style="color: white"></i>
-        </div>
-        <div v-show="chatOpen" class="chat-box">
-          <div class="chat-title">
-            <h2>Game Chat</h2>
-            <span class="minimize-arrow" @click="chatOpen = false">▼</span>
+          <div
+            id="leaderboard"
+            class="leaderboard-container"
+            style="position: absolute; top: 0; left: 0"
+          >
+            <h2 class="leaderboard-heading" @click="toggleLeaderBoard">
+              Leaderboard
+            </h2>
+            <div class="leaderboard-items" v-show="leaderBoardExpanded">
+              <!-- Add more leaderboard items here -->
+              <div v-for="obj in add_scores">
+                {{obj.name}} : {{obj.count}}
+              </div>
+  
+            </div>
+            </div>
           </div>
-          <div class="messages-container">
-            <ul class="messages">
-              <li
-                class="message-item"
-                v-for="message in chatMessages"
-                :key="message.id"
-              >
-                <span class="username">{{message.user}}:</span> {{
-                message.message }}
-              </li>
-            </ul>
+          <div class="chat" style="position: absolute; bottom: 0; right: 0">
+            <div v-show="!chatOpen" class="circle" @click="chatOpen=true">
+              <i class="fa fa-comment" style="color: white"></i>
+            </div>
+            <div v-show="chatOpen" class="chat-box">
+              <div class="chat-title">
+                <h2>Game Chat</h2>
+                <span class="minimize-arrow" @click="chatOpen = false">▼</span>
+              </div>
+              <div class="messages-container">
+                <ul class="messages">
+                  <li
+                    class="message-item"
+                    v-for="message in chatMessages"
+                    :key="message.id"
+                  >
+                    <span class="username">{{message.user}}:</span> {{
+                    message.message }}
+                  </li>
+                </ul>
+              </div>
+              <div class="input-container">
+                <input
+                  type="text"
+                  placeholder="Type your message..."
+                  v-model="chatMessage"
+                  v-on:keyup.enter="send_chat_message"
+                />
+              </div>
+            </div>
           </div>
-          <div class="input-container">
-            <input
-              type="text"
-              placeholder="Type your message..."
-              v-model="chatMessage"
-              v-on:keyup.enter="send_chat_message"
-            />
-          </div>
-        </div>
       </div>
     </div>
+    
   </div>
 </div>
 
