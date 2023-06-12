@@ -31,7 +31,7 @@ from .common import db, session, T, cache, auth, logger, authenticated, unauthen
 from py4web.utils.form import Form, FormStyleBulma
 from py4web.utils.grid import Grid, GridClassStyleBulma
 from py4web.utils.url_signer import URLSigner
-from .models import get_user_email, get_time_timestamp, get_user_id, get_players_game, get_game_name, get_player_pixels, get_username, ttl
+from .models import get_user_email, get_time_timestamp, get_user_id, get_players_game, get_game_name, get_player_pixels, get_username, ttl, check_expired_games
 
 import random
 from datetime import datetime, timedelta
@@ -189,7 +189,9 @@ def get_games():
 @action('leaderboard')
 @action.uses('leaderboard.html', db, auth)
 def leaderboard():
-    return dict()
+    rows = check_expired_games()
+    print(rows)
+    return dict(rows=rows)
 
 # View stats for the signed in player 
 @action('stats')
