@@ -216,17 +216,15 @@ def get_game_score(gid:int):
     return default
 
 def check_if_pixel_color_exists(gid:int,color):
-    q = db(db.Board.game_id == gid, db.Board.color == color).select().as_list()
-    if q:
-        return True
+    pixels = db(db.Board.game_id == gid).select().as_list()
+    for p in pixels:
+        if p["color"] == color:
+            return True
     return False
 
 def check_adjacent_pixel(gid:int,color,x:int,y:int):
     color_pixels = db(db.Board.game_id == gid, db.Board.color == color).select().as_list()
-    print(color_pixels)
     for pixel in color_pixels:
-        print("inside pixel for loop")
-        print(pixel["pos_x"])
         #if trying to place pixel at the same spot (x,y)
         if pixel["pos_x"] == x and pixel["pos_y"] == y:
             return True

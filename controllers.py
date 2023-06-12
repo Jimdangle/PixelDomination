@@ -272,10 +272,9 @@ def draw_url():
             legal_placement = True
         else:
             #otherwise, don't place anything
-            print("tried placing pixel at illegal position")
             legal_placement = False
-
-    print("no pixels of the particular color found on the board, proceed with placing")
+    else:
+        legal_placement = True
     #otherwise, if no pixels with the same color exist, pixel can be placed anywhere, continue with logic
 
     if can_draw and legal_placement:
