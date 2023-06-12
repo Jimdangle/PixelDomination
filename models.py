@@ -77,12 +77,12 @@ def get_player_pixels():
 
 
 db.define_table('Games',
-                Field('name', 'string', default=gen_rand_name),
-                Field('x_size', 'integer', required=True, requires=IS_INT_IN_RANGE(20,200,error_message='pick between 20, and 200')),
-                Field('y_size', 'integer', required=True, requires=IS_INT_IN_RANGE(20,200,error_message='pick between 20, and 200')),
+                Field('name', 'string', default=gen_rand_name, label="Game Title"),
+                Field('x_size', 'integer', required=True, requires=IS_INT_IN_RANGE(20,200,error_message='pick between 20, and 199'), label="Board Width"),
+                Field('y_size', 'integer', required=True, requires=IS_INT_IN_RANGE(20,200,error_message='pick between 20, and 199'), label="Board Height"),
                 Field('time_started','integer',required=True, default=get_time_timestamp),
-                Field('move_interval','integer',required=True),
-                Field('live_time', 'integer', required=True, requires=IS_IN_SET([1,2,4,6,12,24,48,72]))
+                Field('move_interval','integer',required=True, label="Place Cooldown (in seconds)"),
+                Field('live_time', 'integer', required=True, requires=IS_IN_SET([1,2,4,6,12,24,48,72]), label="Game Length (in hours)")
                 )
 
 db.Games.time_started.writable  = False
