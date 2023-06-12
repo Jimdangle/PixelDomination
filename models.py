@@ -28,23 +28,24 @@ def get_time():
 def get_time_timestamp():
     return get_time().timestamp()
 
-def get_players_game():
+def get_players_game(): #get the players current game
     res = db(db.Ply_Stats.user == get_user_id()).select()
     print(res)
     if len(res) > 0:
+        get_game_score(res[0]["last_game_id"])
         return res[0]["last_game_id"]
+    
     
     return None
 
-def get_game_name(id:int):
+def get_game_name(id:int): #get the name of the game at id
     q = db.Games.id==id
     res = db(q).select()
     if len(res) <=0:
         return None
     return res[0]['name']
 
-def gen_rand_name():
-    print("Hello wolf")
+def gen_rand_name(): #generate a random name for the game 
     random.seed(get_time_timestamp())
     adj = random.randint(1,len(ADJS)-1)
     noun = random.randint(1,len(NOUNS)-1)
@@ -82,7 +83,7 @@ db.define_table('Games',
                 Field('y_size', 'integer', required=True, requires=IS_INT_IN_RANGE(20,200,error_message='pick between 20, and 199'), label="Board Height"),
                 Field('time_started','integer',required=True, default=get_time_timestamp),
                 Field('move_interval','integer',required=True, label="Place Cooldown (in seconds)"),
-                Field('live_time', 'integer', required=True, requires=IS_IN_SET([1,2,4,6,12,24,48,72]), label="Game Length (in hours)")
+                Field('live_time', 'integer', required=True, requires=IS_IN_SET([0,1,2,4,6,12,24,48,72]), label="Game Length (in hours)")
                 )
 
 db.Games.time_started.writable  = False
@@ -165,12 +166,14 @@ def clean_tables():
 # We should probably be doing this on every pull
 #clean_tables()
 
-
-def ttl(timestamp_start:int, hours_to_live:int):
+#game end time
+def game_end(timestamp_start:int, hours_to_live:int):
     time = datetime.fromtimestamp(timestamp_start)
     ttl_out = time + timedelta(hours=hours_to_live)
-    time_left = ttl_out - datetime.utcnow()
+    return ttl_out
 
+def ttl(timestamp_start:int, hours_to_live:int):
+    time_left = game_end(timestamp_start,hours_to_live) - datetime.utcnow()
     return time_left
 
 # Clear a Games pixels from the Board table
@@ -183,13 +186,32 @@ def clear_game_board(gid:int):
 
 def check_expired_games():
     q = db.Games.time_started < get_time_timestamp #games created before now 
-    games = db(q).as_list() #select as a list so we can go over them
+    games = db(q).select().as_list() #select as a list so we can go over them
+    output = list() #list of the expired games and their scores 
 
-    dead_games = list()
     for game in games: 
+        item = dict() #item to add to output
         time_started = game['time_started']
         live_time    = game['live_time']
-        if ttl(time_started,live_time) <= 0:
-            dead_games.append(game['id']) #add the id of the dead game to the list
+        end = game_end(time_started,live_time).timestamp()
+        if ttl(time_started,live_time).total_seconds() <= 0:
+            gid = game["id"]
+            item["name"]  = f'{get_game_name(gid)}-{gid}' #name string: name-id
+            item["score"] = get_game_score(gid) #games score {red: n, blue: m, green: o, yellow: p, black: q}
+            item["end_time"] = end #end time of the game 
+            output.append(item) #add to list 
+    
+    return output
 
-    return dead_games()
+
+    
+
+def get_game_score(gid:int):
+    SQL = f'SELECT b.color, COUNT(*) as count FROM Board b WHERE b.game_id={gid} GROUP BY b.color ORDER BY COUNT(*);'
+    r = db.executesql(SQL, as_dict=True)
+    default = {"red":0,"blue":0,"green":0,"yellow":0,"black":0}
+    for color in r:
+        default[color["color"]] = color["count"]
+
+    return default
+
