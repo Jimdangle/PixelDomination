@@ -215,3 +215,44 @@ def get_game_score(gid:int):
 
     return default
 
+def check_if_pixel_color_exists(gid:int,color):
+    q = db(db.Board.game_id == gid, db.Board.color == color).select().as_list()
+    if q:
+        return True
+    return False
+
+def check_adjacent_pixel(gid:int,color,x:int,y:int):
+    color_pixels = db(db.Board.game_id == gid, db.Board.color == color).select().as_list()
+    print(color_pixels)
+    for pixel in color_pixels:
+        print("inside pixel for loop")
+        print(pixel["pos_x"])
+        #if trying to place pixel at the same spot (x,y)
+        if pixel["pos_x"] == x and pixel["pos_y"] == y:
+            return True
+        #if trying to place pixel x + 1, y
+        if pixel["pos_x"] == x + 1 and pixel["pos_y"] == y:
+            return True
+        #if trying to place pixel x - 1, y
+        if pixel["pos_x"] == x - 1 and pixel["pos_y"] == y:
+            return True
+        #if trying to place pixel x, y + 1
+        if pixel["pos_x"] == x and pixel["pos_y"] == y + 1:
+            return True
+        #if trying to place pixel x, y - 1
+        if pixel["pos_x"] == x and pixel["pos_y"] == y - 1:
+            return True
+        #if trying to place pixel x + 1, y + 1
+        if pixel["pos_x"] == x + 1 and pixel["pos_y"] == y + 1:
+            return True
+        #if trying to place pixel x - 1, y + 1
+        if pixel["pos_x"] == x - 1 and pixel["pos_y"] == y + 1:
+            return True
+        #if trying to place pixel x + 1, y - 1
+        if pixel["pos_x"] == x + 1 and pixel["pos_y"] == y - 1:
+            return True
+        #if trying to place pixel x - 1, y - 1
+        if pixel["pos_x"] == x - 1 and pixel["pos_y"] == y - 1:
+            return True     
+    #if we went through all the pixels and didn't find any adjacent ones, return false
+    return False

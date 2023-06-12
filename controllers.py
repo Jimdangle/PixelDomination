@@ -31,7 +31,7 @@ from .common import db, session, T, cache, auth, logger, authenticated, unauthen
 from py4web.utils.form import Form, FormStyleBulma
 from py4web.utils.grid import Grid, GridClassStyleBulma
 from py4web.utils.url_signer import URLSigner
-from .models import get_user_email, get_time_timestamp, get_user_id, get_players_game, get_game_name, get_player_pixels, get_username, ttl, check_expired_games
+from .models import get_user_email, get_time_timestamp, get_user_id, get_players_game, get_game_name, get_player_pixels, get_username, ttl, check_expired_games, check_if_pixel_color_exists, check_adjacent_pixel
 
 import random
 from datetime import datetime, timedelta
@@ -259,13 +259,26 @@ def draw_url():
     color = request.params.get('color')
     game_id = get_players_game()
     print(game_id)
-    
 
     pixels = db(db.Board.game_id == game_id).select()
-
     can_draw = check_update_gclicks(game_id,user,click_time)
+    legal_placement = False
+    #before checking if the use can draw, check if the pixel placement is allowed
+    #first check if any pixels exist on the board with the user's color
+    if check_if_pixel_color_exists(game_id,color):
+        #if pixels color exist then do the logic to check if there's an adjacent pixel of the same color
+        if check_adjacent_pixel(game_id,color,x,y):
+            #if there is adjacent pixel, then we're good to go
+            legal_placement = True
+        else:
+            #otherwise, don't place anything
+            print("tried placing pixel at illegal position")
+            legal_placement = False
 
-    if can_draw:
+    print("no pixels of the particular color found on the board, proceed with placing")
+    #otherwise, if no pixels with the same color exist, pixel can be placed anywhere, continue with logic
+
+    if can_draw and legal_placement:
         #can move, then insert the pixel
         check_if_stats_exist(user,click_time) # this will place the user in the stats table with the given click time
     
@@ -275,9 +288,9 @@ def draw_url():
         id = db.Board.insert(uid = user, pos_x = x, pos_y = y, color = color, game_id = game_id)
         print(id)
         db(db.Ply_Stats.user==user).update(total_clicks=db.Ply_Stats.total_clicks+1,last_click=click_time,last_game_id=game_id) #update clicks
-    
+
     print(pixels)
-    return dict(pixels=pixels, can_move=can_draw)
+    return dict(pixels=pixels, can_move=can_draw, legal_placement=legal_placement)
 
 #get the game size for the given game
 @action('game_grid_url', method="GET")
