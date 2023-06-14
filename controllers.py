@@ -31,8 +31,10 @@ from .common import db, session, T, cache, auth, logger, authenticated, unauthen
 from py4web.utils.form import Form, FormStyleBulma
 from py4web.utils.grid import Grid, GridClassStyleBulma
 from py4web.utils.url_signer import URLSigner
-from .models import get_user_email, get_time_timestamp, get_user_id, get_players_game, get_game_name, get_player_pixels, get_username, ttl, check_expired_games, check_if_pixel_color_exists, check_adjacent_pixel, get_player_team
-
+from .models import get_user_email, get_time_timestamp, get_user_id, get_username, ttl
+from .models import get_game_info, get_game_name
+from .models import get_players_game, get_player_team, get_player_pixels
+from .models import check_expired_games, check_if_pixel_color_exists, check_adjacent_pixel
 import random
 from datetime import datetime, timedelta
 
@@ -193,6 +195,15 @@ def leaderboard():
     print(rows)
     return dict(rows=rows)
 
+@action('oldgame/<gid:int>')
+@action.uses('oldgame.html', db, auth)
+def oldgame(gid = None):
+    if gid is None:
+        gid = 1
+    
+    game_info = get_game_info(gid)
+    return dict(game=game_info)
+    
 
 
 # View stats for the signed in player 
