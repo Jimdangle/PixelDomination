@@ -8,8 +8,35 @@
 <body>
   <div class="section" id="vue-target">
   </div>
-  [[items = ['a', 'b', 'c'] ]]
-  <ul>
-  [[for item in rows:]]<li>[[=item]]</li>[[pass]]
-  </ul>
+  <div class="container">
+    <div class="level"> <!--Main title-->
+      <div class="level-item">
+        <h1 class="title is-1">Leaderboard</h1>
+      </div>
+    </div>
+
+    
+      [[for item in rows:]]
+      <a href="[[=URL('oldgame',item['id'])]]">
+      <div class="tile is-parent"> <!-- Tile items for leaderboard games-->
+        <div class="tile is-child notification box is-light">
+          <div class="columns is-3">
+            <div class="column">
+              <h1 class="title is-3">[[=item["name"] ]]</h1>
+              <h2 class="subtitle is-4">[[=item["game_size"] ]]</h2>
+            </div>
+            <div class="column"></div> <!-- spacer column -->
+            
+            <div class="column is-3">
+              <h1 class="title is-3">Winner: [[ =max(item["score"], key=item["score"].get)  ]]</h1>
+              <h2 class="subtitle is-4">[[=item["end_time"] ]]</h2>
+            </div>
+          </div>
+        </div>
+      </div>
+      </a>
+      [[pass]]
+      
+    
+  </div>
 </body>
