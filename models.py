@@ -254,3 +254,17 @@ def check_adjacent_pixel(gid:int,color,x:int,y:int):
             return True     
     #if we went through all the pixels and didn't find any adjacent ones, return false
     return False
+
+def get_player_team():
+    gid = get_players_game() #id of game 
+    uid = get_user_id() # id of player
+
+    q =((db.Board.game_id == gid) & (db.Board.uid == uid))
+    r = db(q).select() #select all pixels placed by a certain player in a game
+
+    print(f'Getting player team: {r}')
+    if len(r) > 0: #have atleast a result
+        return r[0]['color'] #return the color of the player
+    else:
+        return None #return nothing if else 
+    

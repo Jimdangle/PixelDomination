@@ -31,7 +31,7 @@ from .common import db, session, T, cache, auth, logger, authenticated, unauthen
 from py4web.utils.form import Form, FormStyleBulma
 from py4web.utils.grid import Grid, GridClassStyleBulma
 from py4web.utils.url_signer import URLSigner
-from .models import get_user_email, get_time_timestamp, get_user_id, get_players_game, get_game_name, get_player_pixels, get_username, ttl, check_expired_games, check_if_pixel_color_exists, check_adjacent_pixel
+from .models import get_user_email, get_time_timestamp, get_user_id, get_players_game, get_game_name, get_player_pixels, get_username, ttl, check_expired_games, check_if_pixel_color_exists, check_adjacent_pixel, get_player_team
 
 import random
 from datetime import datetime, timedelta
@@ -193,6 +193,8 @@ def leaderboard():
     print(rows)
     return dict(rows=rows)
 
+
+
 # View stats for the signed in player 
 @action('stats')
 @action.uses('stats.html', db, auth.user)
@@ -260,9 +262,19 @@ def draw_url():
     game_id = get_players_game()
     print(game_id)
 
+    
+
     pixels = db(db.Board.game_id == game_id).select()
     can_draw = check_update_gclicks(game_id,user,click_time)
     legal_placement = False
+    assigned_team = False
+    team = get_player_team() #check to see if the player is on a team
+    if team is None:
+        assigned_team = False
+    else:
+        assigned_team = team
+
+
     #before checking if the use can draw, check if the pixel placement is allowed
     #first check if any pixels exist on the board with the user's color
     if check_if_pixel_color_exists(game_id,color):
@@ -276,6 +288,11 @@ def draw_url():
     else:
         legal_placement = True
     #otherwise, if no pixels with the same color exist, pixel can be placed anywhere, continue with logic
+
+    if color != team and assigned_team: # The requested color does not match the assigned team
+        print(f'{color} vs {team}')
+        legal_placement = False 
+
 
     if can_draw and legal_placement:
         #can move, then insert the pixel
