@@ -191,14 +191,16 @@ def check_expired_games():
 
     for game in games: 
         item = dict() #item to add to output
-        time_started = game['time_started']
+        time_started = game["time_started"]
         live_time    = game['live_time']
-        end = game_end(time_started,live_time).timestamp()
+        size_string  = f'{game["x_size"]} x {game["y_size"]}'
         if ttl(time_started,live_time).total_seconds() <= 0:
             gid = game["id"]
+            item["id"] = gid
             item["name"]  = f'{get_game_name(gid)}-{gid}' #name string: name-id
             item["score"] = get_game_score(gid) #games score {red: n, blue: m, green: o, yellow: p, black: q}
-            item["end_time"] = end #end time of the game 
+            item["end_time"] = f'{live_time}hr(s) Long' #end time of the game 
+            item["game_size"] = size_string
             output.append(item) #add to list 
     
     return output
