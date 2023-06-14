@@ -299,7 +299,8 @@ let init = (app) => {
         .then((r) => {
           //app.data.cells[gridY][gridX] = app.data.selectedColor;
           console.log("can move: " + r.data.can_move);
-          if (r.data.can_move) {
+          console.log("legal placement: " + r.data.legal_placement);
+          if (r.data.can_move && r.data.legal_placement) {
             app.data.cells[gridY][gridX] = app.data.selectedColor;
             app.drawGrid();
           }
