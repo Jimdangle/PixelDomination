@@ -50,6 +50,47 @@
       line-height: 36px !important;
     }
 
+    .scroll-down {
+      position: absolute;
+      left: 50%;
+      bottom: 10px;
+      display: block;
+      text-align: center;
+      font-size: 20px;
+      z-index: 100;
+      text-decoration: none;
+      text-shadow: 0;
+      width: 13px;
+      height: 13px;
+      border-bottom: 2px solid #000;
+      border-right: 2px solid #000;
+      z-index: 9;
+      left: 50%;
+      -webkit-transform: translate(-50%, 0%) rotate(45deg);
+      -moz-transform: translate(-50%, 0%) rotate(45deg);
+      transform: translate(-50%, 0%) rotate(45deg);
+      -webkit-animation: fade_move_down 4s ease-in-out infinite;
+      -moz-animation:    fade_move_down 4s ease-in-out infinite;
+      animation:         fade_move_down 4s ease-in-out infinite;
+    }
+    
+    
+    /*animated scroll arrow animation*/
+    @-webkit-keyframes fade_move_down {
+      0%   { -webkit-transform:translate(0,-10px) rotate(45deg); opacity: 0;  }
+      50%  { opacity: 1;  }
+      100% { -webkit-transform:translate(0,10px) rotate(45deg); opacity: 0; }
+    }
+    @-moz-keyframes fade_move_down {
+      0%   { -moz-transform:translate(0,-10px) rotate(45deg); opacity: 0;  }
+      50%  { opacity: 1;  }
+      100% { -moz-transform:translate(0,10px) rotate(45deg); opacity: 0; }
+    }
+    @keyframes fade_move_down {
+      0%   { transform:translate(0,-10px) rotate(45deg); opacity: 0;  }
+      50%  { opacity: 1;  }
+      100% { transform:translate(0,10px) rotate(45deg); opacity: 0; }
+    }
   </style>
 </head>
 
@@ -85,7 +126,7 @@
           is-4-widescreen is-offset-1-widescreen
           is-4-fullhd is-offset-1-fullhd">
             <figure class="image is-square">
-              <img src="images/pixelboard.gif">
+              <img src="images/homepage.gif">
             </figure>
           </div>
 
@@ -105,7 +146,7 @@
           is-4-widescreen is-offset-1-widescreen
           is-4-fullhd is-offset-1-fullhd">
             <figure class="image is-square">
-              <img src="images/browser.gif">
+              <img src="images/browserupdated.gif">
             </figure>
           </div>
           <div class="column
@@ -143,7 +184,8 @@
             </h1>
             <h2 class="subtitle subtitled">
               Your color is your team. Choose either black, red, green, blue, or yellow to represent
-              and fight for control over the board.
+              and fight for control over the board. Once your choice is made, and your first pixel is placed,
+              your color will be locked for the duration of the game board.
             </h2>
           </div>
           <div class="column
@@ -186,7 +228,8 @@
               Dominate the Board
             </h1>
             <h2 class="subtitled subtitle">
-              Amass as much territory on the board by either placing new pixels or replacing old ones.
+              Amass as much territory as possible by claiming new pixels adjacent to any existing pixels of your color. 
+              Either expand into a blank space, or go on the offensive and steal another team's pixel. 
               Whichever color has the most points scored when the clock hits zero is the victor.
 
             </h2>
@@ -196,6 +239,9 @@
       </div>
     </div>
   </section>
+  <div class="scroll-down"></div>
+
+
 
 
  
