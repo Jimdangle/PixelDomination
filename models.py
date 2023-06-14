@@ -131,7 +131,7 @@ db.define_table('Ply_Stats',
                 Field('user', 'integer', required=True, unique=True),
                 Field('total_clicks', 'integer', default=0),
                 Field('last_click', 'integer'),
-                Field('last_game_id', 'integer')
+                Field('last_game_id', 'integer', default=-1),
                 )
 
 
