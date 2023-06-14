@@ -201,12 +201,31 @@ def check_expired_games():
             item["score"] = get_game_score(gid) #games score {red: n, blue: m, green: o, yellow: p, black: q}
             item["end_time"] = f'{live_time}hr(s) Long' #end time of the game 
             item["game_size"] = size_string
+            item['start_time'] = time_started
             output.append(item) #add to list 
     
-    return output
+    sort = sorted(output, key=lambda d: d['start_time'], reverse=True)
+
+    return sort[:30]
 
 
-    
+def get_game_info(gid:int):
+    q = db.Games.id == gid
+    r = db(q)
+
+    game_info = dict()
+    if r.count() >0:
+        game = r.select()
+        game = game[0]
+        game_info['id'] = game['id']
+        game_info['name_str'] = f"{game['name']}-{game['id']}"
+        game_info['size_str'] = f'{game["x_size"]} x {game["y_size"]}'
+        game_info['score'] = get_game_score(gid)
+        game_info['time'] = f"{game['live_time']}hr(s)"
+        game_info['cooldown'] = game['move_interval']
+        game_info['coverage'] = 100 *sum(game_info['score'].values()) / (game['x_size'] * game['y_size'])
+        game_info['winner_coverage'] = 100*max(game_info["score"].values()) / (game['x_size'] * game['y_size'])
+    return game_info
 
 def get_game_score(gid:int):
     SQL = f'SELECT b.color, COUNT(*) as count FROM Board b WHERE b.game_id={gid} GROUP BY b.color ORDER BY COUNT(*);'

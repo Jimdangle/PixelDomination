@@ -1,0 +1,80 @@
+[[extend 'layout-noFooter.html']]
+
+<head>
+  <title>[[=game['name_str'] ]]</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js">
+  </script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="box">
+            <h1 class="title is-1">Game Info</h1>
+            <hr>
+            <div class="columns">
+                <div class="column">
+                    <h2 class="subtitle is-3">Name: [[=game['name_str'] ]]</h2>
+                    <h2 class="subtitle is-3">Size: [[=game['size_str'] ]]</h2>
+                    <h2 class="subtitle is-3">Time: [[=game['time'] ]]</h2>
+                    <h2 class="subtitle is-3">Cooldown: [[=game['cooldown'] ]]s </h2>
+                    <hr>
+                    <h3 class="subtitle is-3">Winner: [[ =max(game["score"], key=game["score"].get).capitalize()  ]]</h3>
+                    <h3 class="subtitle is-3">Total Pixels: [[=sum(game['score'].values())]]</h3>
+                    <h3 class="subtitle is-3">Total Coverage: [[=game['coverage'] ]]%</h3>
+                    <h3 class="subtitle is-3">Winner Coverage: [[=game['winner_coverage'] ]]%</h3>
+                </div>
+                <div class="column">
+                    <h2 class="title is-3">Pixel Chart</h2>
+                    <canvas id="myChart" style="width:100%;max-width:700px"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="container">
+        <script>
+          const data = {
+            labels: [
+              'Red',
+              'Blue',
+              'Yellow',
+              'Green',
+              'Black'
+            ],
+            datasets: [{
+              label: 'My First Dataset',
+              data: [Number("[[=game['score']['red'] ]]"), Number("[[=game['score']['blue'] ]]"), Number("[[=game['score']['yellow'] ]]"),Number("[[=game['score']['green'] ]]"),Number("[[=game['score']['black'] ]]")],
+              backgroundColor: [
+                'rgb(255, 99, 132)',
+                'rgb(54, 162, 235)',
+                'rgb(255, 205, 86)',
+                'rgb(50, 255, 50)',
+                'rgb(0,0,0)'
+              ],
+              hoverOffset: 4
+            }]
+          };
+    
+          const myChart = new Chart("myChart", {
+            type: 'doughnut',
+            labels: [
+              'Red',
+              'Green',
+              'Blue',
+              'Yellow',
+              'Black'
+    
+            ],
+            data: data,
+            options: {
+              parsing: {
+                key: 'nested.value'
+              }
+            }
+          });
+    
+          console.log(data)
+        </script>
+      </div>
+</body>
