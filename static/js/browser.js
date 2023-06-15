@@ -88,7 +88,7 @@ let init = (app) => {
     console.log(current)
     console.log(id)
 
-    redir = current.origin + "/PixelDomination/play/"+id
+    redir = current.origin + "/play/"+id
     window.location = redir
   }
 
