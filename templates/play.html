@@ -51,7 +51,7 @@
     </div>
     <div v-else>
       <!--If the game is active-->
-      <div class="container box notification is-info-light mb-4 mt-4">
+      <div class="container box notification is-light mb-1 mt-4">
         <div class="level">
           <div class="level-left">
             <div class="level-item">
@@ -71,39 +71,50 @@
             </div>
           </div>
         </div>
+        <hr style="border-style: inset; border-width: 1px;">
         <div class="level">
           <div class="level-left">
             <div v-if="selectedColor != 'None'">
-              <div id="color-picker">
-                <div class="expand">
-                  <div
+              <div class="level-item">
+                <div
                     class="color currentcolor"
                     :style="{ backgroundColor: selectedColor }"
                   ></div> 
-                </div>
               </div>
             </div>
             <div v-else>
-              <div id="color-picker">
-                <div class="expand">
-                  <div
-                    @onload="toggleColorSelector()"
-                  ></div> 
-                  <div class="colorSelector" v-show="colorSelectorShown">
+              <div class="level-item">
+                <div id="color-picker">
+                  <div class="expand">
                     <div
-                      class="color"
-                      v-for="color in colors"
-                      :style="{ backgroundColor: color }"
-                      v-show="color !== selectedColor"
-                      @click="selectedColor = color"
-                    ></div>
+                      @onload="toggleColorSelector()"
+                    ></div> 
+                    <div class="colorSelector" v-show="colorSelectorShown">
+                      <div
+                        class="color"
+                        v-for="color in colors"
+                        :style="{ backgroundColor: color }"
+                        v-show="color !== selectedColor"
+                        @click="selectedColor = color"
+                      ></div>
+                    </div>
                   </div>
                 </div>
+              </div>
+              <div class="level-item">
+                <span>Please select a team.</span>
               </div>
             </div>
           </div>
           <div class="level-right">
-
+            <div v-for="obj in add_scores">
+              <div class="level-item">
+                <div class="notification block has-text-centered" :style="{ backgroundColor: color_dict[obj.name] }">
+                  <h1 class="title is-3 mb-5">{{ obj.name }}</h1>
+                  <h2 class="subtitle has-text-centered">{{ Math.round((obj.count / (totalRows * totalCols) * 100) * 100) / 100 }}%</h2>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

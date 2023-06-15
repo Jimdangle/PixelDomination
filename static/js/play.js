@@ -41,7 +41,7 @@ let init = (app) => {
     MIN_ZOOM: 0.8,
     SCROLL_SENSITIVITY: 0.001,
     colors: ["black", "red", "green", "blue", "yellow"],
-    selectedColor: (team_color == "None") ? "None" : team_color,
+    selectedColor: (team_color == "None" || team_color == undefined) ? "None" : team_color,
     animationFrameId: null,
     lastDragPoint: { x: 0, y: 0 },
     isDragging: false,
@@ -54,6 +54,11 @@ let init = (app) => {
     updateInterval: 5000,
     add_scores: [],
     game_info: {},
+    color_dict: {"black": "rgba(0, 0, 0, 0.5)",
+                "red": "rgba(255, 0, 0, 0.5)",
+                "green": "rgba(0, 255, 0, 0.5)",
+                "blue": "rgba(0, 0, 255, 0.5)",
+                "yellow": "rgba(255, 255, 0, 0.5)"},
   };
 
   app.toggleLeaderBoard = () => {
@@ -285,6 +290,7 @@ let init = (app) => {
       console.log(
         "x: " + gridX + " y: " + gridY + " color: " + app.data.selectedColor
       );
+      if (app.data.selectedColor == undefined || app.data.selectedColor == "None") return;
       //console.log(this.$route.query.game_id) // outputs 'yay'
       axios({
         method: "post",
@@ -377,7 +383,6 @@ let init = (app) => {
   };
 
   app.update = () => {
-    console.log(app.data.selectColor);
     app.get_pixels();
     app.get_chat_messages();
     // app.get_leaderboard();
