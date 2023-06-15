@@ -32,7 +32,7 @@ def get_time_timestamp():
 
 def get_players_game(): #get the players current game
     res = db(db.Ply_Stats.user == get_user_id()).select()
-    print(res)
+    #print(res)
     if len(res) > 0:
         get_game_score(res[0]["last_game_id"])
         return res[0]["last_game_id"]
@@ -53,7 +53,7 @@ def gen_rand_name(): #generate a random name for the game
     noun = random.randint(1,len(NOUNS)-1)
     n2   = random.randint(1,len(N2)-1)
     name = f'{ADJS[adj]} {NOUNS[noun]} {N2[n2]}'
-    print(name)
+    #print(name)
     return name
 
 
@@ -285,7 +285,7 @@ def get_player_team():
     q =((db.Board.game_id == gid) & (db.Board.uid == uid))
     r = db(q).select() #select all pixels placed by a certain player in a game
 
-    print(f'Getting player team: {r}')
+    #print(f'Getting player team: {r}')
     if len(r) > 0: #have atleast a result
         return r[0]['color'] #return the color of the player
     else:

@@ -314,7 +314,6 @@ let init = (app) => {
             app.data.cells[gridY][gridX] = app.data.selectedColor;
             app.drawGrid();
             app.data.move_next_time = (app.data.game_info.move_interval*1000) + Date.now(); // if we can move and its legal we reset the cooldown timer
-            //console.log(`Click Next Time: ${app.data.move_next_time}, cur move_delta: ${app.data.move_delta}`);
           }
         })
         .catch((e) => {
@@ -394,6 +393,10 @@ let init = (app) => {
     // app.get_leaderboard();
   };
 
+  app.update_cooldown = () => {
+
+  }
+
   app.methods = {
     drawGrid: app.drawGrid,
     mousedown: app.mousedown,
@@ -409,6 +412,7 @@ let init = (app) => {
     send_chat_message: app.send_chat_message,
     update: app.update,
     count_score: app.count_score,
+    update_cooldown: app.update_cooldown
   };
 
   app.vue = new Vue({
@@ -448,8 +452,8 @@ let init = (app) => {
           app.data.game_info.end_time + "Z"
         ).getTime();
         // update timer
-        app.data.move_next_time = (last_click + (app.data.game_info.move_interval)*1000);
-        app.data.move_delta = app.data.move_next_time - Date.now();
+        //app.data.move_next_time = (last_click + (app.data.game_info.move_interval)*1000);
+        app.data.move_delta = init_cooldown * 1000; // get the init time 
         
         app.updateTimer();
       })
@@ -493,12 +497,14 @@ let init = (app) => {
       app.updateTimer();
     }, 1000);
 
-    //console.log(`Pre interval: move_delta: ${app.data.move_delta}, move_next: ${app.data.move_next_time}`)
     setInterval( () => { // Cooldown interval only works while on page, if you refresh or leave mid cooldown it fucks up, didnt cook long enough
-        if(app.data.move_next_time <=0) return;
-        app.data.move_delta = app.data.move_next_time - new Date(Date.now());
-        //console.log(`Move delta = (${app.data.move_next_time}) - ${Date.now()} = ${app.data.move_next_time-Date.now()} * 1000 = ${(app.data.move_next_time*1000)-Date.now()}`);
-        
+        console.log(`delta: ${app.data.move_delta}, move_next: ${app.data.move_next_time}`)
+        if(app.data.move_next_time <=0){
+          app.data.move_delta = app.data.move_delta - 500;
+        }
+        else{
+          app.data.move_delta = app.data.move_next_time - new Date(Date.now());
+        }
       
     }, 500);
 

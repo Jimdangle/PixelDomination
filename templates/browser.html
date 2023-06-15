@@ -84,8 +84,8 @@
                             </div>
                           </div>
                           <div class="level-item ">
-                            <a class="button is-success control" @click="play(game.id)">
-                              <span class="icon"><i class="fa fa-play"></i></span>
+                            <a class="button is-success control" @click="play(game.id)"> <!-- Basically bc we get the ids from vue, i couldn't figure out how to put the vue var into the python URL call and then back into the HREF attr-->
+                              <span class="icon"><i class="fa fa-play"></i></span>  <!-- So it just performs a local redirect, need to change the line 91 in browser.js to reflect production-->
                               <span>Join Game</span>
                             </a>
                           </div>

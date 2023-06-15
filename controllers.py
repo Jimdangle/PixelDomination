@@ -47,7 +47,7 @@ url_signer = URLSigner(session)
 @action('index')
 @action.uses('index.html', db, auth.user, url_signer)
 def index():
-    print(get_time_timestamp())
+    #print(get_time_timestamp())
 
     check_if_stats_exist(get_user_id())
     
@@ -115,7 +115,9 @@ def play(gid=None):
         last_click = last_click[0]['click_time']
     else:
         last_click = 0
-    
+
+    init_cooldown = (last_click + game_data['interval']) - (datetime.utcnow().timestamp())
+    print(f'last_click{last_click} + move_interval{game_data["interval"]} = {(last_click + game_data["interval"])}\n - {datetime.now().timestamp()}\ninit cd: {init_cooldown}')
 
     return dict(
         my_callback_url = URL('my_callback', signer=url_signer),
@@ -128,7 +130,8 @@ def play(gid=None):
         game_grid_url = URL('game_grid_url', signer=url_signer),
         count_score_url  = URL('count_score', signer=url_signer),
         team_color=get_player_team(),
-        last_click=last_click
+        last_click=last_click,
+        init_cooldown=init_cooldown
     )
 
 
@@ -203,7 +206,8 @@ def get_games():
 @action.uses('leaderboard.html', db, auth)
 def leaderboard():
     rows = check_expired_games()
-    print(rows)
+
+    #print(rows)
     return dict(rows=rows)
 
 @action('oldgame/<gid:int>')
@@ -242,7 +246,7 @@ def stats():
     ply['yellow'] = pixels['yellow']
     ply['blue'] = pixels['blue']
 
-    print(ply)
+    #print(ply)
     return dict(ply=ply)
 
 #Count the score for a given game
@@ -284,7 +288,7 @@ def draw_url():
     # If the player hasn't picked a team
     if color == None: return
     game_id = get_players_game()
-    print(game_id)
+    #print(game_id)
 
     
 
@@ -314,7 +318,7 @@ def draw_url():
     #otherwise, if no pixels with the same color exist, pixel can be placed anywhere, continue with logic
 
     if color != team and assigned_team: # The requested color does not match the assigned team
-        print(f'{color} vs {team}')
+        #print(f'{color} vs {team}')
         legal_placement = False 
 
     can_draw = False
@@ -329,10 +333,10 @@ def draw_url():
     
         db((db.Board.pos_x==x) & (db.Board.pos_y==y)).delete()
         id = db.Board.insert(uid = user, pos_x = x, pos_y = y, color = color, game_id = game_id)
-        print(id)
+        #print(id)
         db(db.Ply_Stats.user==user).update(total_clicks=db.Ply_Stats.total_clicks+1,last_click=click_time,last_game_id=game_id) #update clicks
 
-    print(pixels)
+    #print(pixels)
     return dict(pixels=pixels, can_move=can_draw, legal_placement=legal_placement)
 
 #get the game size for the given game
@@ -357,13 +361,13 @@ def get_pixesl():
     game = get_players_game()
 
     game_info = db(db.Games.id==game).select()
-    print(game_info)
+    #print(game_info)
     try:
         game_info = game_info[0]
     except:
         return
     
-    print(game)
+    #print(game)
 
     game_data = db(db.Board.game_id==game).select().as_list()
     board = {f"{item['pos_x']},{item['pos_y']}": item['color'] for item in game_data}
@@ -406,7 +410,7 @@ def post_chat():
     user = get_user_id()
     message = request.params.get('message')
 
-    print(game_id)
+    #print(game_id)
 
     db.Chat.insert(gid=game_id, user=user, message=message)
     return dict()
