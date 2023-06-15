@@ -223,8 +223,8 @@ def get_game_info(gid:int):
         game_info['score'] = get_game_score(gid)
         game_info['time'] = f"{game['live_time']}hr(s)"
         game_info['cooldown'] = game['move_interval']
-        game_info['coverage'] = 100 *sum(game_info['score'].values()) / (game['x_size'] * game['y_size'])
-        game_info['winner_coverage'] = 100*max(game_info["score"].values()) / (game['x_size'] * game['y_size'])
+        game_info['coverage'] = round(100 *sum(game_info['score'].values()) / (game['x_size'] * game['y_size']),2)
+        game_info['winner_coverage'] = round(100*max(game_info["score"].values()) / (game['x_size'] * game['y_size']),2)
     return game_info
 
 def get_game_score(gid:int):
