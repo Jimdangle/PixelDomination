@@ -118,6 +118,7 @@ def play(gid=None):
         send_chat_message_url = URL('post_chat', signer=url_signer),
         game_grid_url = URL('game_grid_url', signer=url_signer),
         count_score_url  = URL('count_score', signer=url_signer),
+        team_color=get_player_team()
     )
 
 
