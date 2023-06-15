@@ -41,11 +41,11 @@ let init = (app) => {
     MIN_ZOOM: 0.8,
     SCROLL_SENSITIVITY: 0.001,
     colors: ["black", "red", "green", "blue", "yellow"],
-    selectedColor: "black",
+    selectedColor: (team_color == "None") ? "None" : team_color,
     animationFrameId: null,
     lastDragPoint: { x: 0, y: 0 },
     isDragging: false,
-    colorSelectorShown: false,
+    colorSelectorShown: (team_color == "None") ? true : false,
     leaderBoardExpanded: false,
     game_id: getUrlParameter("game_id"),
     chatOpen: false,
@@ -377,6 +377,7 @@ let init = (app) => {
   };
 
   app.update = () => {
+    console.log(app.data.selectColor);
     app.get_pixels();
     app.get_chat_messages();
     // app.get_leaderboard();
@@ -435,7 +436,11 @@ let init = (app) => {
         ).getTime();
         // update timer
         app.updateTimer();
-        console.log(app.data.game_info);
+
+        console.log(team_color);
+
+        //app.data.selectedColor=team_color;
+
       })
       .catch((e) => {
         console.log(e);

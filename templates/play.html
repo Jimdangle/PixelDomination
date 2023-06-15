@@ -13,6 +13,12 @@
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/3.2.1/css/font-awesome.min.css"
   />
+  <script>
+    let game_end_time_str =  "[[=game_data['end_time']]]";
+    let game_end_time = new Date(game_end_time_str + "Z").getTime();
+    let team_color = "[[=team_color]]";
+    console.log(team_color);
+  </script>
 </head>
 
 <body>
@@ -61,11 +67,48 @@
           </div>
           <div class="level-right">
             <div class="level-item">
-              <h1 class="subtitle is-4" id="gameTimer"></h1>
+              <h2 class="subtitle is-4" id="gameTimer"></h2>
             </div>
           </div>
         </div>
+        <div class="level">
+          <div class="level-left">
+            <div v-if="selectedColor != 'None'">
+              <div id="color-picker">
+                <div class="expand">
+                  <div
+                    class="color currentcolor"
+                    :style="{ backgroundColor: selectedColor }"
+                  ></div> 
+                </div>
+              </div>
+            </div>
+            <div v-else>
+              <div id="color-picker">
+                <div class="expand">
+                  <div
+                    @onload="toggleColorSelector()"
+                  ></div> 
+                  <div class="colorSelector" v-show="colorSelectorShown">
+                    <div
+                      class="color"
+                      v-for="color in colors"
+                      :style="{ backgroundColor: color }"
+                      v-show="color !== selectedColor"
+                      @click="selectedColor = color"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="level-right">
+
+          </div>
+        </div>
       </div>
+
+      
   
       <div
         class="centering"
@@ -76,24 +119,6 @@
           style="width: 80vw; height: 80vh; position: relative"
         >
           <canvas id="canvas" ref="canvas" style="user-select: none"></canvas>
-          <div id="color-picker" style="position: absolute; bottom: 0; left: 0">
-            <div class="expand">
-              <div
-                class="color currentcolor"
-                style="background-color: black"
-                @click="toggleColorSelector()"
-              ></div>
-              <div class="colorSelector" v-show="colorSelectorShown">
-                <div
-                  class="color"
-                  v-for="color in colors"
-                  :style="{ backgroundColor: color }"
-                  v-show="color !== selectedColor"
-                  @click="selectColor(color)"
-                ></div>
-              </div>
-            </div>
-          </div>
           <div
             id="leaderboard"
             class="leaderboard-container"
@@ -144,7 +169,7 @@
           </div>
       </div>
     </div>
-    
+
   </div>
 </div>
 
@@ -159,10 +184,7 @@
     let send_chat_message_url = "[[=XML(send_chat_message_url)]]";
     let game_grid_url = "[[=game_grid_url]]";
     let count_score_url = "[[=XML(count_score_url)]]";
-    let game_end_time_str =  "[[=game_data['end_time']]]";
-    let game_end_time = new Date(game_end_time_str + "Z").getTime();
-    console.log(game_end_time);
-
+    
   </script>
   <script src="js/play.js"></script>
   <script>
