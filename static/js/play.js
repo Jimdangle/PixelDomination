@@ -441,11 +441,6 @@ let init = (app) => {
         ).getTime();
         // update timer
         app.updateTimer();
-
-        console.log(team_color);
-
-        //app.data.selectedColor=team_color;
-
       })
       .catch((e) => {
         console.log(e);

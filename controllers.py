@@ -271,13 +271,15 @@ def draw_url():
     x = int(request.params.get('y'))
     y = int(request.params.get('x'))
     color = request.params.get('color')
+    # If the player hasn't picked a team
+    if color == None: return
     game_id = get_players_game()
     print(game_id)
 
     
 
     pixels = db(db.Board.game_id == game_id).select()
-    can_draw = check_update_gclicks(game_id,user,click_time)
+    
     legal_placement = False
     assigned_team = False
     team = get_player_team() #check to see if the player is on a team
@@ -305,6 +307,9 @@ def draw_url():
         print(f'{color} vs {team}')
         legal_placement = False 
 
+    can_draw = False
+    if legal_placement:
+        can_draw = check_update_gclicks(game_id,user,click_time)
 
     if can_draw and legal_placement:
         #can move, then insert the pixel
