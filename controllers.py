@@ -91,22 +91,31 @@ def create_game():
 @action('play/<gid:int>')
 @action.uses('play.html', db, auth.user, url_signer)
 def play(gid=None):
-    print(gid)
+    #print(gid)
     user = get_user_id()
     check_if_stats_exist(user)
     db(db.Ply_Stats.user==user).update(last_game_id=gid)
-    print(f'{user}  playing game {gid}')
+    #print(f'{user}  playing game {gid}')
 
     game_info = db(db.Games.id==gid).select()
 
     try:
         game = game_info[0]
         time = ttl(game['time_started'], game['live_time'])
-        game_data = {'name': game['name'], 'ttl': str(time).split('.')[0], 'end_time' : (datetime.fromtimestamp(game["time_started"]) + timedelta(hours=game['live_time'])).isoformat()}
+        game_data = {'name': game['name'], 'ttl': str(time).split('.')[0], 'end_time' : (datetime.fromtimestamp(game["time_started"]) + timedelta(hours=game['live_time'])).isoformat(), 'interval':game['move_interval']}
     
     except:
         game_data = {'name': 'None', 'ttl': 'None'}
 
+
+    # get players last click if happened 
+    last_click = db.executesql(f'SELECT click_time FROM GClick WHERE gid={gid} AND user={user};', as_dict=True)
+    print(last_click)
+    if len(last_click) >0:
+        last_click = last_click[0]['click_time']
+    else:
+        last_click = 0
+    
 
     return dict(
         my_callback_url = URL('my_callback', signer=url_signer),
@@ -118,7 +127,8 @@ def play(gid=None):
         send_chat_message_url = URL('post_chat', signer=url_signer),
         game_grid_url = URL('game_grid_url', signer=url_signer),
         count_score_url  = URL('count_score', signer=url_signer),
-        team_color=get_player_team()
+        team_color=get_player_team(),
+        last_click=last_click
     )
 
 
