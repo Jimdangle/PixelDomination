@@ -59,6 +59,8 @@ let init = (app) => {
                 "green": "rgba(0, 255, 0, 0.5)",
                 "blue": "rgba(0, 0, 255, 0.5)",
                 "yellow": "rgba(255, 255, 0, 0.5)"},
+    move_next_time: 0, // init move next time to 0
+    move_delta: 0 // move delta to 0
   };
 
   app.toggleLeaderBoard = () => {
@@ -306,9 +308,13 @@ let init = (app) => {
           //app.data.cells[gridY][gridX] = app.data.selectedColor;
           console.log("can move: " + r.data.can_move);
           console.log("legal placement: " + r.data.legal_placement);
+          
+
           if (r.data.can_move && r.data.legal_placement) {
             app.data.cells[gridY][gridX] = app.data.selectedColor;
             app.drawGrid();
+            app.data.move_next_time = (app.data.game_info.move_interval*1000) + Date.now(); // if we can move and its legal we reset the cooldown timer
+            //console.log(`Click Next Time: ${app.data.move_next_time}, cur move_delta: ${app.data.move_delta}`);
           }
         })
         .catch((e) => {
@@ -413,6 +419,8 @@ let init = (app) => {
 
   app.init = function () {
     current_game_id = getLastPart(window.location.href);
+
+
     axios({
       method: "get",
       url: game_grid_url,
@@ -440,6 +448,9 @@ let init = (app) => {
           app.data.game_info.end_time + "Z"
         ).getTime();
         // update timer
+        app.data.move_next_time = (last_click + (app.data.game_info.move_interval)*1000);
+        app.data.move_delta = app.data.move_next_time - Date.now();
+        
         app.updateTimer();
       })
       .catch((e) => {
@@ -481,6 +492,15 @@ let init = (app) => {
     setInterval(() => {
       app.updateTimer();
     }, 1000);
+
+    //console.log(`Pre interval: move_delta: ${app.data.move_delta}, move_next: ${app.data.move_next_time}`)
+    setInterval( () => { // Cooldown interval only works while on page, if you refresh or leave mid cooldown it fucks up, didnt cook long enough
+        if(app.data.move_next_time <=0) return;
+        app.data.move_delta = app.data.move_next_time - new Date(Date.now());
+        //console.log(`Move delta = (${app.data.move_next_time}) - ${Date.now()} = ${app.data.move_next_time-Date.now()} * 1000 = ${(app.data.move_next_time*1000)-Date.now()}`);
+        
+      
+    }, 500);
 
     // Add the event listeners
     app.data.canvas.addEventListener("mousedown", app.mousedown.bind(this));

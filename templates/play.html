@@ -17,6 +17,8 @@
     let game_end_time_str =  "[[=game_data['end_time']]]";
     let game_end_time = new Date(game_end_time_str + "Z").getTime();
     let team_color = "[[=team_color]]";
+    let last_click = Number("[[=last_click]]");
+    console.log(last_click);
     console.log(team_color);
   </script>
 </head>
@@ -66,6 +68,10 @@
             </div>
           </div>
           <div class="level-right">
+            <div class="level-item">
+              <h2 v-if="move_delta > 0" class="subtitle is-4" id="clickTimer">Cooldown: {{ Math.round(move_delta / 1000) }}s |</h2>
+              <h2 v-else="" class="subtitle is-4">Can Move |</h2>
+            </div>
             <div class="level-item">
               <h2 class="subtitle is-4" id="gameTimer"></h2>
             </div>
@@ -221,6 +227,7 @@
         span.textContent = days + " Days " + hh + ":" + mm + ":" + ss;
       else span.textContent = hh + ":" + mm + ":" + ss;
     }
+
     // Set 1s interval to update timer
     setInterval(timer, 1000);
   
