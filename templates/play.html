@@ -61,7 +61,7 @@
           </div>
           <div class="level-right">
             <div class="level-item">
-              <h1 class="subtitle is-4"> {{ game_info.ttl}} </h1>
+              <h1 class="subtitle is-4" id="gameTimer"></h1>
             </div>
           </div>
         </div>
@@ -159,8 +159,37 @@
     let send_chat_message_url = "[[=XML(send_chat_message_url)]]";
     let game_grid_url = "[[=game_grid_url]]";
     let count_score_url = "[[=XML(count_score_url)]]";
+    let game_end_time_str =  "[[=game_data['end_time']]]";
+    let game_end_time = new Date(game_end_time_str + "Z").getTime();
+    console.log(game_end_time);
 
   </script>
   <script src="js/play.js"></script>
+  <script>
+    // Grab the timer element
+    var span = document.getElementById('gameTimer');
+    function timer() {
+      var now = new Date(Date.now());
+      // Print out the time left
+      var diff = game_end_time - now;
+      // Get values for each amount
+      var days = Math.floor(
+        (diff % (1000 * 60 * 60 * 24 * 7)) / (1000 * 60 * 60 * 24)
+      );
+      var hh = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      var mm = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      var ss = Math.floor((diff % (1000 * 60)) / 1000);
+      // Add padding 0s if necesary
+      if (ss < 10) ss = "0" + ss;
+      if (mm < 10) mm = "0" + mm;
+      if (hh < 10) hh = "0" + hh;
+      if (days > 0)
+        span.textContent = days + " Days " + hh + ":" + mm + ":" + ss;
+      else span.textContent = hh + ":" + mm + ":" + ss;
+    }
+    // Set 1s interval to update timer
+    setInterval(timer, 1000);
+  
+  </script>
   [[end]]
 </body>

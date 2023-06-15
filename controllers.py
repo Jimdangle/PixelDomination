@@ -102,7 +102,7 @@ def play(gid=None):
     try:
         game = game_info[0]
         time = ttl(game['time_started'], game['live_time'])
-        game_data = {'name': game['name'], 'ttl': str(time).split('.')[0] }
+        game_data = {'name': game['name'], 'ttl': str(time).split('.')[0], 'end_time' : (datetime.fromtimestamp(game["time_started"]) + timedelta(hours=game['live_time'])).isoformat()}
     
     except:
         game_data = {'name': 'None', 'ttl': 'None'}

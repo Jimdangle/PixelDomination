@@ -435,10 +435,6 @@ let init = (app) => {
         ).getTime();
         // update timer
         app.updateTimer();
-        // Set interval to update timer every second
-        setInterval(() => {
-          app.updateTimer();
-        }, 1000);
         console.log(app.data.game_info);
       })
       .catch((e) => {
@@ -476,6 +472,10 @@ let init = (app) => {
     // TODO - fix race condition where pixel is posted before the get_pixels request is finished
     setInterval(app.update, app.data.updateInterval); // Get Pixels every 10 seconds
     setInterval(app.count_score, app.data.updateInterval);
+    // Set interval to update timer every second
+    setInterval(() => {
+      app.updateTimer();
+    }, 1000);
 
     // Add the event listeners
     app.data.canvas.addEventListener("mousedown", app.mousedown.bind(this));
