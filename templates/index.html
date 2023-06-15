@@ -1,5 +1,5 @@
 
-[[extend 'layout.html']]
+[[extend 'layout-noFooter.html']]
 
 <style>
   [v-cloak] {
@@ -8,47 +8,252 @@
 </style>
 
 <head>
-  <title>Drawable Grid</title>
+  <title>Home - Pixel Domination</title>
   <style>
     #canvas {
       border: 1px solid #000;
     }
 
     .color {
-      width: 50px;
-      height: 50px;
+      width: 40px;
+      height: 40px;
       display: inline-block;
       margin: 2px;
+    }
+
+    .expand {
+      display: flex;
+      flex-direction: row;
+    }
+    .center {
+      display: block;
+      width: 66%;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    @media(max-width: 500px) {
+      .reverse-columns {
+        flex-direction: column-reverse;
+        display: flex;
+      }
+    }
+
+    .titled {
+      font-size: 58px !important;
+      font-weight: 400 !important;
+      line-height: 64px !important;
+    }
+
+    .subtitled {
+      font-size: 22px !important;
+      font-weight: 400 !important;
+      line-height: 36px !important;
+    }
+
+    .scroll-down {
+      position: absolute;
+      left: 50%;
+      bottom: 10px;
+      display: block;
+      text-align: center;
+      font-size: 20px;
+      z-index: 100;
+      text-decoration: none;
+      text-shadow: 0;
+      width: 13px;
+      height: 13px;
+      border-bottom: 2px solid #000;
+      border-right: 2px solid #000;
+      z-index: 9;
+      left: 50%;
+      -webkit-transform: translate(-50%, 0%) rotate(45deg);
+      -moz-transform: translate(-50%, 0%) rotate(45deg);
+      transform: translate(-50%, 0%) rotate(45deg);
+      -webkit-animation: fade_move_down 4s ease-in-out infinite;
+      -moz-animation:    fade_move_down 4s ease-in-out infinite;
+      animation:         fade_move_down 4s ease-in-out infinite;
+    }
+    
+    
+    /*animated scroll arrow animation*/
+    @-webkit-keyframes fade_move_down {
+      0%   { -webkit-transform:translate(0,-10px) rotate(45deg); opacity: 0;  }
+      50%  { opacity: 1;  }
+      100% { -webkit-transform:translate(0,10px) rotate(45deg); opacity: 0; }
+    }
+    @-moz-keyframes fade_move_down {
+      0%   { -moz-transform:translate(0,-10px) rotate(45deg); opacity: 0;  }
+      50%  { opacity: 1;  }
+      100% { -moz-transform:translate(0,10px) rotate(45deg); opacity: 0; }
+    }
+    @keyframes fade_move_down {
+      0%   { transform:translate(0,-10px) rotate(45deg); opacity: 0;  }
+      50%  { opacity: 1;  }
+      100% { transform:translate(0,10px) rotate(45deg); opacity: 0; }
     }
   </style>
 </head>
 
 <body>
-  <div class="section" id="vue-target">
-    <div class=""container>
-      <canvas id="canvas" ref="canvas" width="500" height="500" style="margin-left: auto; margin-right: auto;display: block;"></canvas>
-
-      <div class="block" style="margin-left: auto; margin-right: auto;display: block;">
-        <div class="color" style="background-color: red;" @click="selectColor('red')"></div>
-        <div class="color" style="background-color: green;" @click="selectColor('green')"></div>
-        <div class="color" style="background-color: blue;" @click="selectColor('blue')"></div>
-        <div class="color" style="background-color: yellow;" @click="selectColor('yellow')"></div>
-        <div class="color" style="background-color: black;" @click="selectColor('black')"></div>
-      </div>
-
-      <button class="button" @click="get_pixels"><span>Get Pixels</span></button>
+  <!--div class="section">
+    <-div h1 style="text-align:center;" class="title is-1"> Pixel Domination</h1>
+    <div>
+      <img src="images/pixeldomination.png" alt = "Pixel Domination" class="center"/> 
     </div>
-  </div>
+    </div>
+  </div-->
+  <section class="hero is-white is-fullheight">
+    <div class="hero-body">
+      <div class="container">
+        <div class="columns  is-vcentered reverse-columns">
+          <div class="column 
+          is-10-mobile is-offset-1-mobile 
+          is-10-tablet is-offset-1-tablet
+          is-5-desktop is-offset-1-desktop
+          is-5-widescreen is-offset-1-widescreen
+          is-5-fullhd is-offset-1-fullhd">
+            <h1 class="title titled is-1 mb-6">
+              Welcome to Pixel Domination 
+            </h1>
+            <h2 class="subtitle subtitled">
+              Created by Mark Arguinbaev, Cal Blanco, Will Hord, Isaac Leiva, and Frank Podraza.
+            </h2>
+          </div>
+          <div class="column
+          is-10-mobile is-offset-1-mobile
+          is-10-tablet is-offset-1-tablet
+          is-4-desktop is-offset-1-desktop
+          is-4-widescreen is-offset-1-widescreen
+          is-4-fullhd is-offset-1-fullhd">
+            <figure class="image is-square">
+              <img src="images/homepage.gif">
+            </figure>
+          </div>
 
-  
+        </div>
+      </div>
+    </div>
+  </section>
 
+  <section class="hero is-white is-fullheight">
+    <div class="hero-body">
+      <div class="container">
+        <div class="columns  is-vcentered">
+          <div class="column
+          is-10-mobile is-offset-1-mobile
+          is-10-tablet is-offset-1-tablet
+          is-4-desktop is-offset-1-desktop
+          is-4-widescreen is-offset-1-widescreen
+          is-4-fullhd is-offset-1-fullhd">
+            <figure class="image is-square">
+              <img src="images/browserupdated.gif">
+            </figure>
+          </div>
+          <div class="column
+          is-10-mobile is-offset-1-mobile
+          is-10-tablet is-offset-1-tablet
+          is-5-desktop is-offset-1-desktop
+          is-5-widescreen is-offset-1-widescreen
+          is-5-fullhd is-offset-1-fullhd">
+            <h1 class="titled title is-1 mb-6">
+              Choose or Create Your Own Server
+            </h1>
+            <h2 class="subtitled subtitle">
+              Specify the size, time between placements, and how long the game is live,
+              or simply join an existing server.
+            </h2>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="hero is-white is-fullheight">
+    <div class="hero-body">
+      <div class="container">
+        <div class="columns  is-vcentered reverse-columns">
+          <div class="column
+          is-10-mobile is-offset-1-mobile
+          is-10-tablet is-offset-1-tablet
+          is-5-desktop is-offset-1-desktop
+          is-5-widescreen is-offset-1-widescreen
+          is-5-fullhd is-offset-1-fullhd">
+            <h1 class="title titled is-1 mb-6">
+              Pick a Color 
+            </h1>
+            <h2 class="subtitle subtitled">
+              Your color is your team. Choose either black, red, green, blue, or yellow to represent
+              and fight for control over the board. Once your choice is made, and your first pixel is placed,
+              your color will be locked for the duration of the game board.
+            </h2>
+          </div>
+          <div class="column
+          is-10-mobile is-offset-1-mobile
+          is-10-tablet is-offset-1-tablet
+          is-4-desktop is-offset-1-desktop
+          is-4-widescreen is-offset-1-widescreen
+          is-4-fullhd is-offset-1-fullhd">
+            <figure class="image is-square">
+              <img src="images/colorselector.gif">
+            </figure>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="hero is-white is-fullheight">
+    <div class="hero-body">
+      <div class="container">
+        <div class="columns  is-vcentered">
+          <div class="column
+          is-10-mobile is-offset-1-mobile
+          is-10-tablet is-offset-1-tablet
+          is-4-desktop is-offset-1-desktop
+          is-4-widescreen is-offset-1-widescreen
+          is-4-fullhd is-offset-1-fullhd">
+            <figure class="image is-square">
+              <img src="images/domination.gif">
+            </figure>
+          </div>
+          <div class="column
+          is-10-mobile is-offset-1-mobile
+          is-10-tablet is-offset-1-tablet
+          is-5-desktop is-offset-1-desktop
+          is-5-widescreen is-offset-1-widescreen
+          is-5-fullhd is-offset-1-fullhd">
+            <h1 class="titled title is-1 mb-6">
+              Dominate the Board
+            </h1>
+            <h2 class="subtitled subtitle">
+              Amass as much territory as possible by claiming new pixels adjacent to any existing pixels of your color. 
+              Either expand into a blank space, or go on the offensive and steal another team's pixel. 
+              Whichever color has the most points scored when the clock hits zero is the victor.
+
+            </h2>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+  <div class="scroll-down"></div>
+
+
+
+
+ 
 
   [[block page_scripts]]
   <!-- Loads the index-specific js for Vue -->
   <script>
     let my_callback_url = "[[=XML(my_callback_url)]]";
     let get_pixels_url = "[[=XML(get_pixels_url)]]";
+    let get_new_game_url = "[[=XML(get_new_game_url)]]";
     let draw_url = "[[=XML(draw_url)]]";
+    let count_score_url = "[[=XML(count_score_url)]]";
 
   </script>
   <script src="js/index.js"></script>

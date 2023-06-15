@@ -1,0 +1,144 @@
+#canvas {
+  border: 1px solid #000;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+}
+
+.color {
+  width: 50px;
+  height: 50px;
+  display: inline-block;
+  margin: 2px;
+}
+
+.expand {
+  display: flex;
+  flex-direction: row;
+  user-select: none;
+}
+
+.colorSelector {
+  display: flex;
+}
+
+.centering {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.leaderboard-container {
+  background-color: rgba(128, 128, 128, 0.9);
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
+  color: white;
+  margin: 5px;
+  user-select: none;
+}
+
+.leaderboard-heading {
+  margin-top: 0;
+}
+
+.leaderboard-items {
+  display: flex;
+  flex-direction: column;
+
+}
+
+.leaderboard-items.show {
+  display: block;
+}
+
+.leaderboard-item {
+  padding: 5px;
+}
+
+.circle {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: rgba(128, 128, 128, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.chat-box {
+  width: 300px;
+  height: 200px;
+  border-radius: 10px;
+  background-color: rgba(0, 0, 0, 0.7); /* Dark, slightly transparent background */
+  position: relative;
+  color: white;
+  overflow: hidden;
+}
+
+.chat-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  /* background-color: #333; */
+  /* margin-bottom: 10px; */
+}
+
+.messages-container {
+  height: calc(100% - 50px - 30px);
+  overflow-y: auto;
+  padding: 10px;
+  box-sizing: border-box;
+  scrollbar-width: thin;
+  scrollbar-color: #777 #444;
+}
+
+.messages {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.message-item {
+  margin-bottom: 10px;
+}
+
+.username {
+  font-weight: bold;
+}
+
+.input-container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+  /* background-color: #333; */
+}
+
+.input-container input {
+  width: 100%;
+  padding: 5px;
+  border-radius: 5px;
+  border: none;
+}
+
+/* Custom styled scrollbar */
+.messages-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.messages-container::-webkit-scrollbar-track {
+  background: #444;
+}
+
+.messages-container::-webkit-scrollbar-thumb {
+  background: #777;
+}
+
+.timestamp {
+  font-size: 10px;
+}

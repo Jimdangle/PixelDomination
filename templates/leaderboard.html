@@ -1,0 +1,49 @@
+
+[[extend 'layout-noFooter.html']]
+
+<head>
+  <title>Leaderboard - Pixel Domination</title>
+</head>
+
+<body>
+  <div class="section" id="vue-target">
+  </div>
+  <div class="container">
+
+    <div class="box">
+      <div class="level"> <!--Main title-->
+        <div class="level-item">
+          <h1 class="title is-1"><i class="fa fa-list-alt" aria-hidden="true"></i>
+            Leaderboard</h1>
+        </div>
+      </div>
+
+      [[for item in rows:]]
+      <a href="[[=URL('oldgame',item['id'])]]">
+      <div class="tile is-parent"> <!-- Tile items for leaderboard games-->
+        <div class="tile is-child notification box is-light">
+          <div class="columns is-3">
+            <div class="column">
+              <h1 class="title is-3">[[=item["name"] ]]</h1>
+              <h2 class="subtitle is-4">[[=item["game_size"] ]]</h2>
+            </div>
+            <div class="column"></div> <!-- spacer column -->
+            
+            <div class="column is-3">
+              <h1 class="title is-3"><i class="fa fa-trophy" aria-hidden="true"></i> [[ =max(item["score"], key=item["score"].get).capitalize()  ]] </h1>
+              <h2 class="subtitle is-4">[[=item["end_time"] ]]</h2>
+              <h2 class="subtitle is-5 has-text-info">View Game Stats <span class="subtitle is-6"><i class="fa fa-play" aria-hidden="true"></i></span></h2>
+              <h2 class="subtitle is-6 has-text-info"></h2>
+               
+            </div>
+          </div>
+        </div>
+      </div>
+      </a>
+
+      [[pass]]
+    </div>
+      
+    
+  </div>
+</body>

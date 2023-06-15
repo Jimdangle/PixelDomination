@@ -14,17 +14,30 @@
     <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
       <div class="navbar-brand">
         <a class="navbar-item" href="[[=URL('index')]]">
-          Home
+          <span class="icon is-small mr-1">
+            <i class="fa fa-home"></i>
+          </span> 
+          <span>Home</span>
         </a>
         <a class="navbar-item" href="[[=URL('browser')]]">
-          Server Browser
+          <span class="icon is-small mr-1">
+            <i class="fa fa-th-list"></i>
+          </span>
+          <span>Server Browser</span>
         </a>
         <a class="navbar-item" href="[[=URL('leaderboard')]]">
-          Leaderboard
+          <span class="icon is-small mr-1">
+            <i class="fa fa-list-ol"></i>
+          </span>
+          <span>Leaderboard</span>
         </a>
         <a class="navbar-item" href="[[=URL('stats')]]">
-          Stats
+          <span class="icon is-small mr-1">
+            <i class="fa fa-user"></i>
+          </span>
+          <span>Stats</span>
         </a>
+
 
         <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="the-navbar-menu"
            onclick="this.classList.toggle('is-active');document.getElementById(this.dataset.target).classList.toggle('is-active');">
@@ -60,23 +73,6 @@
               [[pass]]
             </div>
           </div>
-
-          [[if globals().get('user'):]]
-          <div class="navbar-item">
-            <p>[[=globals().get('user').get('email')]]</p>
-          </div>
-          [[pass]]
-          <div class="navbar-item">
-            <div class="buttons">
-              [[if globals().get('user'):]]
-              <a class="button is-light" href="[[=URL('auth/logout')]]">Sign out</a>
-              [[else:]]
-              <a class="button is-link" href="[[=URL('auth/plugin/oauth2google/login', vars=dict(next=URL('index')))]]">Google Sign In</a>
-              [[pass]]
-            </div>
-          </div>
-
-
         </div>
       </div>
     </nav>
@@ -84,12 +80,6 @@
     <!-- beginning of HTML inserted by extending template -->
     [[include]]
     <!-- end of HTML inserted by extending template -->
-    <footer class="footer">
-      <div class="content has-text-centered">
-        Made with <a href="https://py4web.com">py4web</a>.
-        <a href="https://learn-py4web.github.io">Learn py4web!</a>
-      </div>
-    </footer>
   </body>
   <script src="js/sugar.min.js"></script>
   <script src="js/axios.min.js"></script>
